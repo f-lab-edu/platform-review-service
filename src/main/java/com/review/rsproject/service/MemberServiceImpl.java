@@ -40,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
     public void duplicate(String username) {
         Optional<Member> findUsername = memberRepository.findByUsername(username);
         if (findUsername.isPresent()) {
-            throw new MemberSignUpException();
+            throw new MemberSignUpException("이미 존재하는 회원 이름입니다.");
         }
     }
 
