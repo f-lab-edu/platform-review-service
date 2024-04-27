@@ -1,14 +1,11 @@
 package com.review.rsproject.handler;
 
-import com.review.rsproject.dto.ErrorDto;
 import com.review.rsproject.exception.MemberSignUpException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,9 +21,8 @@ public class ExceptionHandlers {
     private final MessageSource messageSource;
 
     @ExceptionHandler(MemberSignUpException.class)
-    public ResponseEntity<ErrorDto> signUpEx(MemberSignUpException ex) {
-        ErrorDto errorDto = new ErrorDto("회원가입 실패", ex.getMessage());
-        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> signUpEx(MemberSignUpException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 
