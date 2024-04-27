@@ -2,10 +2,13 @@ package com.review.rsproject.domain;
 
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Platform extends Auditable {
 
     @Id
@@ -27,4 +30,10 @@ public class Platform extends Auditable {
     private Member member;
 
 
+    public Platform(String name, String url, String description, Member member) {
+        this.name = name;
+        this.url = url;
+        this.description = description;
+        this.member = member;
+    }
 }
