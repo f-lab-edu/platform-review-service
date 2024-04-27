@@ -14,10 +14,13 @@ public class Member {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @Column(name = "member_id")
     private Long Id;
 
+    @Column(unique = true, length = 15, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(value = EnumType.STRING)
