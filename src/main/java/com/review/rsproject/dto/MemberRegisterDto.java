@@ -1,23 +1,16 @@
 package com.review.rsproject.dto;
 
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.Range;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MemberDto {
+public class MemberRegisterDto {
 
 
     @Length(min = 7, max = 15)
