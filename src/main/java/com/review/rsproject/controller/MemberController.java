@@ -1,8 +1,9 @@
 package com.review.rsproject.controller;
 
 
-import com.review.rsproject.dto.MemberDto;
+import com.review.rsproject.dto.MemberRegisterDto;
 import com.review.rsproject.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +18,10 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/sign-up")
-    public String signup(@RequestBody MemberDto memberDto) {
-        memberService.register(memberDto);
-        return memberDto.getUsername();
+    public String signup(@RequestBody @Valid MemberRegisterDto memberRegisterDto) {
+
+        memberService.register(memberRegisterDto);
+        return memberRegisterDto.getUsername();
 
     }
 }
