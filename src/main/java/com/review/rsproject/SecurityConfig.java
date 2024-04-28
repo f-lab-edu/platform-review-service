@@ -7,8 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.AuthenticationException;
@@ -19,11 +21,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
 
 
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -63,7 +67,14 @@ public class SecurityConfig {
                                     response.setCharacterEncoding("UTF-8");
                                     response.getWriter().write("인증이 필요한 요청입니다.");
                                 }
-                        ))
+                        ).accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType("text/html;charset:UTF-8");
+                            response.setCharacterEncoding("UTF-8");
+                            response.getWriter().write("접근 권한이 부족합니다.");
+                        })
+
+
+                )
 
                 .sessionManagement(session -> session.maximumSessions(1)
                         .maxSessionsPreventsLogin(false)) // 동시 접속 비활성화, 같은 아이디로 접속 시 기존 사용자 세션 만료

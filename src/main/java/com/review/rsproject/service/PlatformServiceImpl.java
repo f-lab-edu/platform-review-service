@@ -3,8 +3,11 @@ package com.review.rsproject.service;
 import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
 import com.review.rsproject.dto.PlatformApplyDto;
+import com.review.rsproject.dto.PlatformEditDto;
+import com.review.rsproject.exception.PlatformNotFoundException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,4 +36,21 @@ public class PlatformServiceImpl implements PlatformService{
 
         return platformRepository.save(platform);
     }
+
+    @Override
+    @Transactional
+    public Platform updatePlatform(PlatformEditDto editDto) {
+
+        Long id = editDto.getId();
+        Optional<Platform> platform = platformRepository.findById(id);
+
+        if (platform.isEmpty()) {
+            throw new PlatformNotFoundException("존재하지 않는 플랫폼 번호입니다.");
+        }
+
+
+        return platform.get().changeInfo(editDto.getDescription(), editDto.getStatus());
+    }
+
+
 }
