@@ -1,10 +1,12 @@
 package com.review.rsproject.handler;
 
 import com.review.rsproject.exception.MemberSignUpException;
+import com.review.rsproject.exception.PlatformNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,12 +22,29 @@ public class ExceptionHandlers {
 
     private final MessageSource messageSource;
 
-    @ExceptionHandler(MemberSignUpException.class)
-    public ResponseEntity<String> signUpEx(MemberSignUpException ex) {
+
+    /*
+     * 커스텀 예외 처리
+     * */
+    @ExceptionHandler({MemberSignUpException.class, PlatformNotFoundException.class})
+    public ResponseEntity<String> customEx(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 
+    /*
+     * JSON 매칭 예외 처리
+     * */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> jsonEx(Exception ex) {
+        return new ResponseEntity<>("JSON 요청 형식이 맞지 않습니다.", HttpStatus.BAD_REQUEST);
+    }
+
+
+
+    /*
+    * Bean Validation 에 대한 검증 예외 처리
+    * */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> validEx(MethodArgumentNotValidException ex){
         Map<String, String> errors = new HashMap<>();

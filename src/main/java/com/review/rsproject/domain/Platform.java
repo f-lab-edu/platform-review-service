@@ -1,6 +1,7 @@
 package com.review.rsproject.domain;
 
 
+import com.review.rsproject.type.PlatformStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,6 +26,9 @@ public class Platform extends Auditable {
     @Column(length = 50, nullable = false)
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    private PlatformStatus status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -35,5 +39,17 @@ public class Platform extends Auditable {
         this.url = url;
         this.description = description;
         this.member = member;
+        this.status = PlatformStatus.WAIT;
     }
+
+    public Platform changeInfo(String description, PlatformStatus status) {
+        if (description != null) {
+            this.description = description;
+        }
+        if (status != null) {
+            this.status = status;
+        }
+        return this;
+    }
+
 }
