@@ -26,7 +26,7 @@ public class PlatformServiceImpl implements PlatformService{
        Optional<Member> member = memberRepository.findByUsername(username);
 
        if (member.isEmpty()) {
-           throw new UsernameNotFoundException("잘못된 요청");
+           throw new UsernameNotFoundException("요청에 대한 유저 정보를 조회할 수 없습니다.");
        }
 
         Platform platform = new Platform(applyDto.getName(), applyDto.getUrl(), applyDto.getDescription(), member.get());
