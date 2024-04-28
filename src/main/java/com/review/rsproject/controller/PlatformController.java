@@ -3,6 +3,7 @@ package com.review.rsproject.controller;
 
 import com.review.rsproject.dto.PlatformApplyDto;
 import com.review.rsproject.service.PlatformService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +19,7 @@ public class PlatformController {
 
 
     @PostMapping("/platform")
-    public String applyPlatform(@RequestBody PlatformApplyDto applyDto) {
+    public String applyPlatform(@RequestBody @Valid PlatformApplyDto applyDto) {
         platformService.addPlatform(applyDto);
         return "ok";
     }

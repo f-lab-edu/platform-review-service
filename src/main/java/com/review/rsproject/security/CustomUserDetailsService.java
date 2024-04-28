@@ -1,7 +1,6 @@
 package com.review.rsproject.security;
 
 import com.review.rsproject.domain.Member;
-import com.review.rsproject.dto.MemberDto;
 import com.review.rsproject.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
