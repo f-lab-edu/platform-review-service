@@ -3,42 +3,82 @@ package com.review.rsproject.service;
 import com.review.rsproject.domain.Member;
 import com.review.rsproject.dto.MemberRegisterDto;
 import com.review.rsproject.exception.MemberSignUpException;
+import com.review.rsproject.repository.MemberRepository;
+import com.review.rsproject.type.MemberRole;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-@SpringBootTest
-@Transactional
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+
+@ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
-    @Autowired MemberService memberService;
+    @InjectMocks
+    MemberServiceImpl memberService;
+
+    @Mock
+    MemberRepository memberRepository;
+
+    @Spy
+    BCryptPasswordEncoder passwordEncoder;
+
+    String username;
+    String password;
+
+    @BeforeEach
+    void before() {
+        username = "testuser";
+        password = "123456789a";
+    }
 
     @Test
-    void 회원가입() {
+    @DisplayName("회원가입")
+    void member_register() {
+
         // given
-        String username = "test_user";
-        MemberRegisterDto memberRegisterDto = new MemberRegisterDto(username, "123123");
+        String password = "123456789a";
+        MemberRegisterDto request = new MemberRegisterDto(username, password);
+
+        password = passwordEncoder.encode(password);
+        when(memberRepository.save(any())).thenReturn(new Member(request.getUsername(), password, MemberRole.ROLE_USER));
 
         // when
-        Member member = memberService.register(memberRegisterDto);
+        Member member = memberService.register(request);
 
         // then
-        Assertions.assertEquals(username, member.getUsername());
+        assertEquals(request.getUsername(), member.getUsername());
+        assertEquals(password, member.getPassword());
+        assertEquals(MemberRole.ROLE_USER, member.getRole());
+
+
 
     }
 
     @Test
-    void 회원가입_중복체크() {
+    @DisplayName("회원가입 중복체크")
+    void member_register_duplicate() {
         // given
-        String username = "test_user";
-        MemberRegisterDto memberRegisterDto = new MemberRegisterDto(username, "123123");
+        MemberRegisterDto request = new MemberRegisterDto(username, password);
 
-        // when
-        Member member = memberService.register(memberRegisterDto);
+        Member member = new Member(request.getUsername(), password, MemberRole.ROLE_USER);
+        when(memberRepository.findByUsername(any())).thenReturn(Optional.of(member));
 
-       // then
-        Assertions.assertThrows(MemberSignUpException.class, () -> memberService.register(memberRegisterDto));
+        // then
+        assertThrows(MemberSignUpException.class, () -> memberService.register(request));
+
+
     }
 }
