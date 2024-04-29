@@ -53,7 +53,7 @@ class PlatformServiceTest {
 
         PlatformApplyDto request = new PlatformApplyDto("네이버", "https://naver.com", "검색 엔진 포털 사이트입니다.");
         Platform response = new Platform(request.getName(), request.getUrl(), request.getDescription(), member);
-add
+
         when(memberRepository.findByUsername(any())).thenReturn(Optional.of(member));
         when(platformRepository.save(any())).thenReturn(response);
 

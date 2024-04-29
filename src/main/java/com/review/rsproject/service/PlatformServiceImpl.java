@@ -4,15 +4,21 @@ import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
 import com.review.rsproject.dto.PlatformApplyDto;
 import com.review.rsproject.dto.PlatformEditDto;
+import com.review.rsproject.dto.PlatformPageDto;
 import com.review.rsproject.exception.PlatformNotFoundException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
+import com.review.rsproject.type.PlatformStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,6 +56,31 @@ public class PlatformServiceImpl implements PlatformService{
 
 
         return platform.get().changeInfo(editDto.getDescription(), editDto.getStatus());
+    }
+
+
+    @Override
+    public PlatformPageDto getPlatformList(Integer page, PlatformStatus status) {
+
+        Pageable pageRequest = PageRequest.of(page, 10);
+
+        Page<Platform> platform = platformRepository.findByStatus(pageRequest, status);
+
+
+        // DTO 값 설정
+        PlatformPageDto platformPageDto = new PlatformPageDto();
+        platformPageDto.setNowPage(platform.getNumber());
+        platformPageDto.setTotalPage(platform.getTotalPages());
+        platformPageDto.setTotalSize(platform.getTotalElements());
+        platformPageDto.setPageSize(platform.getSize());
+
+
+        // entity to dto
+        platform.getContent().forEach(p ->
+                platformPageDto.getPlatformList().add(new PlatformPageDto.dto(p.getId(), p.getName(), p.getStatus()))
+        );
+
+        return platformPageDto;
     }
 
 
