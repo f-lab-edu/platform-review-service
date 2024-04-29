@@ -4,10 +4,13 @@ import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
 import com.review.rsproject.dto.request.PlatformApplyDto;
 import com.review.rsproject.dto.request.PlatformEditDto;
+import com.review.rsproject.dto.response.PlatformInfoDto;
+import com.review.rsproject.exception.PlatformNotFoundException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.type.MemberRole;
 import com.review.rsproject.type.PlatformStatus;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,13 +73,20 @@ class PlatformServiceTest {
     }
 
     @Test
-    @DisplayName("플랫폼 등록자의 유저 정보가 DB에 없는 경우")
+    @DisplayName("플랫폼 등록, 등록자의 유저 정보가 DB에 없는 경우")
     void platform_register_ex() {
         when(memberRepository.findByUsername(any())).thenReturn(Optional.empty());
         setContextByUsername(username);
 
         assertThrows(UsernameNotFoundException.class, () -> platformService.addPlatform(null));
 
+    }
+
+    private void setContextByUsername(String _username) {
+        UserDetails userDetails = new User(_username, "1111", new ArrayList<>());
+
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()));
     }
 
     @Test
@@ -99,11 +109,32 @@ class PlatformServiceTest {
     }
 
 
+    @Test
+    @DisplayName("특정 플랫폼 조회")
+    void platform_info_check() {
+        // given
+        Member member = new Member(username, "1111", MemberRole.ROLE_USER);
+        Platform platform = new Platform("네이버", "https://naver.com", "검색 엔진 포털 사이트입니다.", member);
+        when(platformRepository.findByIdAndFetchMember(1L)).thenReturn(Optional.of(platform));
 
-    private void setContextByUsername(String _username) {
-        UserDetails userDetails = new User(_username, "1111", new ArrayList<>());
+        // when
+        PlatformInfoDto platformInfo = platformService.getPlatformInfo(1L);
 
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()));
+        // then
+        Assertions.assertThat(platformInfo.getPlatformName()).isEqualTo(platform.getName());
+        Assertions.assertThat(platformInfo.getUrl()).isEqualTo(platform.getUrl());
+        Assertions.assertThat(platformInfo.getDescription()).isEqualTo(platform.getDescription());
+        Assertions.assertThat(platformInfo.getStatus()).isEqualTo(platform.getStatus());
     }
+
+    @Test
+    @DisplayName("특정 플랫폼 조회, 플랫폼이 없는 경우")
+    void platform_info_check_ex() {
+        // then
+        assertThrows(PlatformNotFoundException.class, () -> platformService.getPlatformInfo(1L));
+    }
+
+
+
+
 }

@@ -1,9 +1,11 @@
 package com.review.rsproject.service;
 
+import com.review.rsproject.common.ConstantValues;
 import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
 import com.review.rsproject.dto.request.PlatformApplyDto;
 import com.review.rsproject.dto.request.PlatformEditDto;
+import com.review.rsproject.dto.response.PlatformInfoDto;
 import com.review.rsproject.dto.response.PlatformPageDto;
 import com.review.rsproject.exception.PlatformNotFoundException;
 import com.review.rsproject.repository.MemberRepository;
@@ -11,6 +13,7 @@ import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.type.PlatformStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +53,7 @@ public class PlatformServiceImpl implements PlatformService{
         Optional<Platform> platform = platformRepository.findById(id);
 
         if (platform.isEmpty()) {
-            throw new PlatformNotFoundException("존재하지 않는 플랫폼 번호입니다.");
+            throw new PlatformNotFoundException();
         }
 
 
@@ -61,7 +64,7 @@ public class PlatformServiceImpl implements PlatformService{
     @Override
     public PlatformPageDto getPlatformList(Integer page, PlatformStatus status) {
 
-        Pageable pageRequest = PageRequest.of(page, 10);
+        Pageable pageRequest = PageRequest.of(page, ConstantValues.PAGE_SIZE);
 
         Page<Platform> platform = platformRepository.findByStatus(pageRequest, status);
 
@@ -80,6 +83,29 @@ public class PlatformServiceImpl implements PlatformService{
         );
 
         return platformPageDto;
+    }
+
+    @Override
+    public PlatformInfoDto getPlatformInfo(Long id) {
+        Optional<Platform> platform = platformRepository.findByIdAndFetchMember(id);
+
+        if (platform.isEmpty()) {
+            throw new PlatformNotFoundException();
+        }
+
+        Platform result = platform.get();
+
+        return PlatformInfoDto.builder()
+                .platformName(result.getName())
+                .description(result.getDescription())
+                .memberName(result.getMember().getUsername())
+                .url(result.getUrl())
+                .status(result.getStatus())
+                .modifiedDt(result.getModifiedDt())
+                .createdDt(result.getCreatedDt()).build();
+
+
+
     }
 
 

@@ -3,6 +3,7 @@ package com.review.rsproject.controller;
 
 import com.review.rsproject.dto.request.PlatformApplyDto;
 import com.review.rsproject.dto.request.PlatformEditDto;
+import com.review.rsproject.dto.response.PlatformInfoDto;
 import com.review.rsproject.dto.response.PlatformPageDto;
 import com.review.rsproject.service.PlatformService;
 import com.review.rsproject.type.PlatformStatus;
@@ -39,6 +40,12 @@ public class PlatformController {
     @GetMapping("/platforms")
     public PlatformPageDto listPlatform(@RequestParam(name = "page") Integer page, @RequestParam(name = "status") @Nullable PlatformStatus status) {
         return platformService.getPlatformList(page, status);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/platform/{id}")
+    public PlatformInfoDto infoPlatform(@PathVariable(name = "id") Long id) {
+        return platformService.getPlatformInfo(id);
     }
 
 
