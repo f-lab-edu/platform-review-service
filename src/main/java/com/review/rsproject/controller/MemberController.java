@@ -1,7 +1,7 @@
 package com.review.rsproject.controller;
 
 
-import com.review.rsproject.dto.MemberRegisterDto;
+import com.review.rsproject.dto.request.MemberRegisterDto;
 import com.review.rsproject.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

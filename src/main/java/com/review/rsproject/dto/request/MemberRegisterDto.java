@@ -1,4 +1,4 @@
-package com.review.rsproject.dto;
+package com.review.rsproject.dto.request;
 
 
 import jakarta.validation.constraints.Pattern;

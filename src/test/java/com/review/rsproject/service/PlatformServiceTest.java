@@ -2,13 +2,12 @@ package com.review.rsproject.service;
 
 import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
-import com.review.rsproject.dto.PlatformApplyDto;
-import com.review.rsproject.dto.PlatformEditDto;
+import com.review.rsproject.dto.request.PlatformApplyDto;
+import com.review.rsproject.dto.request.PlatformEditDto;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.type.MemberRole;
 import com.review.rsproject.type.PlatformStatus;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

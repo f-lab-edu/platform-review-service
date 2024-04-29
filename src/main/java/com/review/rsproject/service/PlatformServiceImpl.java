@@ -2,9 +2,9 @@ package com.review.rsproject.service;
 
 import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
-import com.review.rsproject.dto.PlatformApplyDto;
-import com.review.rsproject.dto.PlatformEditDto;
-import com.review.rsproject.dto.PlatformPageDto;
+import com.review.rsproject.dto.request.PlatformApplyDto;
+import com.review.rsproject.dto.request.PlatformEditDto;
+import com.review.rsproject.dto.response.PlatformPageDto;
 import com.review.rsproject.exception.PlatformNotFoundException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
@@ -18,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
