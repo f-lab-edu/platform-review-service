@@ -3,10 +3,11 @@ package com.review.rsproject.service;
 import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
 import com.review.rsproject.dto.PlatformApplyDto;
+import com.review.rsproject.dto.PlatformEditDto;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.type.MemberRole;
-import org.junit.jupiter.api.Assertions;
+import com.review.rsproject.type.PlatformStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -42,13 +41,9 @@ class PlatformServiceTest {
     @InjectMocks
     PlatformServiceImpl platformService;
 
-    String username;
+    private static final String username = "testuser";
 
 
-    @BeforeEach
-    void before() {
-        username = "testuser";
-    }
 
     @Test
     @DisplayName("플랫폼 등록")
@@ -58,7 +53,7 @@ class PlatformServiceTest {
 
         PlatformApplyDto request = new PlatformApplyDto("네이버", "https://naver.com", "검색 엔진 포털 사이트입니다.");
         Platform response = new Platform(request.getName(), request.getUrl(), request.getDescription(), member);
-
+add
         when(memberRepository.findByUsername(any())).thenReturn(Optional.of(member));
         when(platformRepository.save(any())).thenReturn(response);
 
@@ -83,6 +78,25 @@ class PlatformServiceTest {
 
         assertThrows(UsernameNotFoundException.class, () -> platformService.addPlatform(null));
 
+    }
+
+    @Test
+    @DisplayName("플랫폼 수정")
+    void platform_edit() {
+
+        // given
+        PlatformEditDto editDto = new PlatformEditDto(1L, "검색 엔진 포털 사이트였는데 바뀌었습니다.", PlatformStatus.ACCEPT);
+
+        Platform original = new Platform("네이버", "https://naver.com", "검색 엔진 포털 사이트입니다.", null);
+        when(platformRepository.findById(1L)).thenReturn(Optional.of(original));
+
+        // when
+        Platform resultPlatform = platformService.updatePlatform(editDto);
+
+
+        // then
+        assertEquals(editDto.getDescription(), resultPlatform.getDescription());
+        assertEquals(editDto.getStatus(), resultPlatform.getStatus());
     }
 
 

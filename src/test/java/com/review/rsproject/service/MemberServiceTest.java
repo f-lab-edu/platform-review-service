@@ -35,12 +35,11 @@ class MemberServiceTest {
     @Spy
     BCryptPasswordEncoder passwordEncoder;
 
-    String username;
+    private static final String username = "testuser";
     String password;
 
     @BeforeEach
     void before() {
-        username = "testuser";
         password = "123456789a";
     }
 
