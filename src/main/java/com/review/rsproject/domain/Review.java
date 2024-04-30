@@ -1,10 +1,12 @@
 package com.review.rsproject.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Review extends Auditable {
 
     @Id
@@ -31,5 +33,7 @@ public class Review extends Auditable {
         this.star = star;
         this.member = member;
         this.platform = platform;
+
+        platform.getReviews().add(this);
     }
 }
