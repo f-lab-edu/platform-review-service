@@ -18,7 +18,7 @@ public class PlatformSearchDto {
     private Integer totalPage;
     private Integer nowPage;
     private Long totalSize;
-    private Integer pageSize;
+    private Integer platformCount;
 
     private List<dto> platformList;
 

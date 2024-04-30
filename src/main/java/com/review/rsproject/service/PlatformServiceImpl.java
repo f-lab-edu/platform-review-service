@@ -125,7 +125,7 @@ public class PlatformServiceImpl implements PlatformService{
                 .query(searchDto.getQuery())
                 .nowPage(result.getNumber())
                 .totalPage(result.getTotalPages())
-                .pageSize(result.getSize())
+                .platformCount(result.getContent().size())
                 .platformList(new ArrayList<>())
                 .totalSize(result.getTotalElements()).build();
 
