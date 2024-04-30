@@ -1,22 +1,18 @@
 package com.review.rsproject.controller;
 
 
-import com.review.rsproject.common.ConstantValues;
 import com.review.rsproject.dto.request.PlatformApplyDto;
 import com.review.rsproject.dto.request.PlatformEditDto;
-import com.review.rsproject.dto.request.SearchDto;
+import com.review.rsproject.dto.request.PlatformSearchDto;
 import com.review.rsproject.dto.response.PlatformInfoDto;
 import com.review.rsproject.dto.response.PlatformPageDto;
-import com.review.rsproject.dto.response.PlatformSearchDto;
+import com.review.rsproject.dto.response.PlatformSearchResultDto;
 import com.review.rsproject.service.PlatformService;
-import com.review.rsproject.type.PlatformSort;
 import com.review.rsproject.type.PlatformStatus;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +32,8 @@ public class PlatformController {
     }
 
     @GetMapping("/platform/search")
-    public PlatformSearchDto searchPlatform(@ModelAttribute @Valid SearchDto searchDto) {
-        return platformService.getPlatformSearchResult(searchDto);
+    public PlatformSearchResultDto searchPlatform(@ModelAttribute @Valid PlatformSearchDto platformSearchDto) {
+        return platformService.getPlatformSearchResult(platformSearchDto);
     }
 
 

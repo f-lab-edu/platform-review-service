@@ -8,7 +8,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class SearchDto {
+public class PlatformSearchDto {
 
 
     @NotBlank
@@ -19,7 +19,7 @@ public class SearchDto {
 
     private PlatformSort sort;
 
-    public SearchDto() {
+    public PlatformSearchDto() {
 
         this.page = 0;
         this.sort = PlatformSort.DATE_ASC;

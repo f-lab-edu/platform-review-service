@@ -5,18 +5,16 @@ import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
 import com.review.rsproject.dto.request.PlatformApplyDto;
 import com.review.rsproject.dto.request.PlatformEditDto;
-import com.review.rsproject.dto.request.SearchDto;
+import com.review.rsproject.dto.request.PlatformSearchDto;
 import com.review.rsproject.dto.response.PlatformInfoDto;
 import com.review.rsproject.dto.response.PlatformPageDto;
-import com.review.rsproject.dto.response.PlatformSearchDto;
+import com.review.rsproject.dto.response.PlatformSearchResultDto;
 import com.review.rsproject.exception.PlatformNotFoundException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
-import com.review.rsproject.type.PlatformSort;
 import com.review.rsproject.type.PlatformStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -113,16 +111,16 @@ public class PlatformServiceImpl implements PlatformService{
     }
 
     @Override
-    public PlatformSearchDto getPlatformSearchResult(SearchDto searchDto) {
+    public PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto) {
 
 
-        Pageable pageable = PageRequest.of(searchDto.getPage(), ConstantValues.PAGE_SIZE);
+        Pageable pageable = PageRequest.of(platformSearchDto.getPage(), ConstantValues.PAGE_SIZE);
 
-        Page<Platform> result = platformRepository.findByQuery(searchDto.getQuery(), pageable, searchDto.getSort());
+        Page<Platform> result = platformRepository.findByQuery(platformSearchDto.getQuery(), pageable, platformSearchDto.getSort());
 
         // dto 생성
-        PlatformSearchDto searchResult = PlatformSearchDto.builder()
-                .query(searchDto.getQuery())
+        PlatformSearchResultDto searchResult = PlatformSearchResultDto.builder()
+                .query(platformSearchDto.getQuery())
                 .nowPage(result.getNumber())
                 .totalPage(result.getTotalPages())
                 .platformCount(result.getContent().size())
@@ -131,7 +129,7 @@ public class PlatformServiceImpl implements PlatformService{
 
         // entity -> dto 매핑
         for (Platform platform : result.getContent()) {
-            PlatformSearchDto.dto dto = PlatformSearchDto.dto.builder()
+            PlatformSearchResultDto.dto dto = PlatformSearchResultDto.dto.builder()
                     .star(platform.getStar())
                     .reviewCount(platform.getReviews().size())
                     .name(platform.getName())
