@@ -1,6 +1,7 @@
 package com.review.rsproject.handler;
 
 import com.review.rsproject.exception.MemberSignUpException;
+import com.review.rsproject.exception.PlatformAccessDeniedException;
 import com.review.rsproject.exception.PlatformNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -26,7 +27,7 @@ public class ExceptionHandlers {
     /*
      * 커스텀 예외 처리
      * */
-    @ExceptionHandler({MemberSignUpException.class, PlatformNotFoundException.class})
+    @ExceptionHandler({MemberSignUpException.class, PlatformNotFoundException.class, PlatformAccessDeniedException.class})
     public ResponseEntity<String> customEx(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }

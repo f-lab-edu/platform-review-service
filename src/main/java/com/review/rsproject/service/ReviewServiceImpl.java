@@ -4,10 +4,12 @@ import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
 import com.review.rsproject.domain.Review;
 import com.review.rsproject.dto.request.ReviewWriteDto;
+import com.review.rsproject.exception.PlatformAccessDeniedException;
 import com.review.rsproject.exception.PlatformNotFoundException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.repository.ReviewRepository;
+import com.review.rsproject.type.PlatformStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Query;
@@ -33,6 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Review addReview(ReviewWriteDto reviewWriteDto) {
         Member member = validMember();
         Platform platform = validPlatform(reviewWriteDto.getPlatformId());
+
 
         // 리뷰 저장
         Review review = new Review(platform, member, reviewWriteDto.getContent(), reviewWriteDto.getStar());
@@ -80,6 +83,11 @@ public class ReviewServiceImpl implements ReviewService {
         if (platform.isEmpty()) {
             throw new PlatformNotFoundException();
         }
+        if (platform.get().getStatus() != PlatformStatus.ACCEPT) {
+            throw new PlatformAccessDeniedException();
+        }
+
+
         return platform.get();
     }
 }

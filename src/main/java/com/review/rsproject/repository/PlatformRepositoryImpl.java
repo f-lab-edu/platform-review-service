@@ -43,7 +43,7 @@ public class PlatformRepositoryImpl implements CustomPlatformRepository{
     @Override
     public Page<Platform> findByQuery(String platformName, Pageable pageable, PlatformSort sort) {
         List<Platform> platforms = query.select(platform).from(platform)
-                .where(platform.name.contains(platformName))
+                .where(platform.status.eq(PlatformStatus.ACCEPT).and(platform.name.contains(platformName)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(sortConverter(sort))
