@@ -3,11 +3,13 @@ package com.review.rsproject.service;
 import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
 import com.review.rsproject.domain.Review;
+import com.review.rsproject.dto.request.ReviewEditDto;
 import com.review.rsproject.dto.request.ReviewWriteDto;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.repository.ReviewRepository;
 import com.review.rsproject.type.MemberRole;
+import com.review.rsproject.type.PlatformStatus;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -73,6 +75,35 @@ class ReviewServiceTest {
         Assertions.assertThat(review.getPlatform().getReviews().size()).isEqualTo(1);
 
 
+    }
+
+    @Test
+    @DisplayName("리뷰 수정")
+    void review_edit() {
+        // given
+        setContextByUsername(USERNAME);
+        Member member = new Member(USERNAME, "1111", MemberRole.ROLE_USER);
+        Platform platform = new Platform("네이버", "https://naver.com", "네이버버버버", member);
+        platform.changeInfo(null, PlatformStatus.ACCEPT);
+        Review review = new Review(platform, member, "수정되기 전의 리뷰", (byte) 5);
+
+
+        when(reviewRepository.findByIdFetchOther(any())).thenReturn(Optional.of(review));
+
+            // 플랫폼 평점 업데이트 Mock
+        List<Long[]> reviewData = new ArrayList<>();
+        reviewData.add(new Long[] {1L, 10L}); // 1개의 리뷰, 총 리뷰 점수 합계 10점)
+        when(reviewRepository.findByStar(any())).thenReturn(reviewData);
+
+
+        // when
+        Review result = reviewService.updateReview(new ReviewEditDto(1L, "수정된 리뷰", (byte) 10));
+
+
+
+        // then
+        Assertions.assertThat(result.getStar()).isEqualTo((byte)10);
+        Assertions.assertThat(result.getContent()).isEqualTo("수정된 리뷰");
     }
 
 
