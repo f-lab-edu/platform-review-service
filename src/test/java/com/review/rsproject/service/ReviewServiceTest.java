@@ -5,6 +5,7 @@ import com.review.rsproject.domain.Platform;
 import com.review.rsproject.domain.Review;
 import com.review.rsproject.dto.request.ReviewEditDto;
 import com.review.rsproject.dto.request.ReviewWriteDto;
+import com.review.rsproject.exception.ReviewAccessDeniedException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.repository.ReviewRepository;
@@ -104,6 +105,23 @@ class ReviewServiceTest {
         // then
         Assertions.assertThat(result.getStar()).isEqualTo((byte)10);
         Assertions.assertThat(result.getContent()).isEqualTo("수정된 리뷰");
+    }
+
+    @Test
+    @DisplayName("리뷰 수정, 다른 사람이 수정하려 하는 경우")
+    void review_edit_other() {
+        // given
+        setContextByUsername("bad_test_user");
+        Member member = new Member(USERNAME, "1111", MemberRole.ROLE_USER);
+        Platform platform = new Platform("네이버", "https://naver.com", "네이버버버버", member);
+        platform.changeInfo(null, PlatformStatus.ACCEPT);
+        Review review = new Review(platform, member, "수정되기 전의 리뷰", (byte) 5);
+        
+        when(reviewRepository.findByIdFetchOther(any())).thenReturn(Optional.of(review));
+
+
+        // when then
+        assertThrows(ReviewAccessDeniedException.class, () -> reviewService.updateReview(new ReviewEditDto(1L, "수정된 리뷰", (byte) 10)));
     }
 
 
