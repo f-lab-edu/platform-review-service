@@ -61,15 +61,13 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 리뷰 수정
         review.changeInfo(reviewEditDto.getContent(), reviewEditDto.getStar());
-        Review savedReview = reviewRepository.save(review);
 
         // 리뷰에서 별점이 수정되었다면 플랫폼 평점 업데이트 진행
         if(!oldStar.equals(review.getStar())) {
-            Platform platform = refreshPlatformStar(review.getPlatform());
-            platformRepository.save(platform);
+            refreshPlatformStar(review.getPlatform());
         }
 
-        return savedReview;
+        return review;
     }
 
 
@@ -122,7 +120,7 @@ public class ReviewServiceImpl implements ReviewService {
     * */
 
     private Review validReview(Long reviewId) {
-        Optional<Review> review = reviewRepository.findByIdFetchMember(reviewId);
+        Optional<Review> review = reviewRepository.findByIdFetchOther(reviewId);
 
         if (review.isEmpty()) {
             throw  new ReviewNotFoundException();
@@ -133,6 +131,11 @@ public class ReviewServiceImpl implements ReviewService {
                 .equals(review.get().getMember().getUsername())) {
             throw new ReviewAccessDeniedException();
         }
+
+        if (review.get().getPlatform().getStatus() != PlatformStatus.ACCEPT) {
+            throw new PlatformAccessDeniedException();
+        }
+
         return review.get();
     }
 

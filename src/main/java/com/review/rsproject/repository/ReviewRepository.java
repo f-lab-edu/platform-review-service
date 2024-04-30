@@ -16,7 +16,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Long[]> findByStar(@Param("platformId") Long platformId);
 
     @Query("select r from Review r where r.id = :id")
-    @EntityGraph(attributePaths = {"member"})
-    Optional<Review> findByIdFetchMember(@Param("id") Long id);
+    @EntityGraph(attributePaths = {"member", "platform"})
+    Optional<Review> findByIdFetchOther(@Param("id") Long id);
 
 }
