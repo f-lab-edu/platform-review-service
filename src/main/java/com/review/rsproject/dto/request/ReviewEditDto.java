@@ -1,6 +1,7 @@
 package com.review.rsproject.dto.request;
 
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,13 +13,13 @@ import org.hibernate.validator.constraints.Range;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewWriteDto {
+public class ReviewEditDto {
 
     @NotNull
     private Long id;
 
-    @Length(max = 500)
     @NotBlank
+    @Length(max = 500)
     private String content;
 
     @NotNull
