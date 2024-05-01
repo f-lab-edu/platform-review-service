@@ -140,6 +140,7 @@ public class PlatformServiceImpl implements PlatformService{
         // entity -> dto 매핑
         for (Platform platform : result.getContent()) {
             PlatformSearchResultDto.dto dto = PlatformSearchResultDto.dto.builder()
+                    .no(platform.getId())
                     .star(platform.getStar())
                     .reviewCount(platform.getReviews().size())
                     .name(platform.getName())
