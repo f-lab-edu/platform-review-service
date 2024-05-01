@@ -1,7 +1,9 @@
 package com.review.rsproject.controller;
 
 import com.review.rsproject.dto.request.ReviewEditDto;
+import com.review.rsproject.dto.request.ReviewListDto;
 import com.review.rsproject.dto.request.ReviewWriteDto;
+import com.review.rsproject.dto.response.ReviewListResultDto;
 import com.review.rsproject.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +32,10 @@ public class ReviewController {
     public String removeReview(@RequestParam(name = "id") Long id) {
         reviewService.deleteReview(id);
         return "ok";
+    }
+
+    @GetMapping("/review")
+    public ReviewListResultDto listReview(@ModelAttribute @Valid ReviewListDto reviewListDto) {
+        return reviewService.getReviewList(reviewListDto);
     }
 }

@@ -12,7 +12,7 @@ import com.review.rsproject.exception.PlatformNotFoundException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.type.MemberRole;
-import com.review.rsproject.type.PlatformSort;
+import com.review.rsproject.type.SortType;
 import com.review.rsproject.type.PlatformStatus;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -155,11 +155,11 @@ class PlatformServiceTest {
         Page<Platform> platformPage = new PageImpl<>(mockBuildPlatform(10), pageable, totalSize);
 
         // Mock 설정
-        when(platformRepository.findByQuery("네이버", pageable, PlatformSort.DATE_DESC)).thenReturn(platformPage);
+        when(platformRepository.findByQuery("네이버", pageable, SortType.DATE_DESC)).thenReturn(platformPage);
 
 
         // when
-        PlatformSearchResultDto result = platformService.getPlatformSearchResult(new PlatformSearchDto("네이버", 0, PlatformSort.DATE_DESC));
+        PlatformSearchResultDto result = platformService.getPlatformSearchResult(new PlatformSearchDto("네이버", 0, SortType.DATE_DESC));
 
 
         // then

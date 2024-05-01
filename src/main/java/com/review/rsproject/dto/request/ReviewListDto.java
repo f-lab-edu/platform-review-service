@@ -2,27 +2,26 @@ package com.review.rsproject.dto.request;
 
 
 import com.review.rsproject.type.SortType;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @Data
-public class PlatformSearchDto {
+public class ReviewListDto {
 
+    @NotNull
+    private Long id;
 
-    @NotBlank
-    private String query;
-
+    @NotNull
     private Integer page;
-
 
     private SortType sort;
 
-    public PlatformSearchDto() {
-
+    public ReviewListDto() {
+        this.sort = SortType.DATE_DESC;
         this.page = 0;
-        this.sort = SortType.DATE_ASC;
 
     }
 }

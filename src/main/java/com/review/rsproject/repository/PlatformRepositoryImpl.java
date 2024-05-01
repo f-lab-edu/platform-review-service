@@ -4,7 +4,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.review.rsproject.domain.Platform;
-import com.review.rsproject.type.PlatformSort;
+import com.review.rsproject.type.SortType;
 import com.review.rsproject.type.PlatformStatus;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class PlatformRepositoryImpl implements CustomPlatformRepository{
     }
 
     @Override
-    public Page<Platform> findByQuery(String platformName, Pageable pageable, PlatformSort sort) {
+    public Page<Platform> findByQuery(String platformName, Pageable pageable, SortType sort) {
         List<Platform> platforms = query.select(platform).from(platform)
                 .where(platform.status.eq(PlatformStatus.ACCEPT).and(platform.name.contains(platformName)))
                 .offset(pageable.getOffset())
@@ -58,7 +58,7 @@ public class PlatformRepositoryImpl implements CustomPlatformRepository{
 
 
 
-    private OrderSpecifier<?> sortConverter(PlatformSort sort) {
+    private OrderSpecifier<?> sortConverter(SortType sort) {
 
         switch (sort) {
             case STAR_ASC ->  { return new OrderSpecifier(Order.ASC, platform.star); }
