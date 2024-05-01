@@ -115,6 +115,19 @@ class ReviewServiceTest {
         assertThrows(ReviewAccessDeniedException.class, () -> reviewService.updateReview(new ReviewEditDto(1L, "수정된 리뷰", (byte) 10)));
     }
 
+    @Test
+    @DisplayName("리뷰 삭제, 다른 사람이 삭제하려는 경우")
+    void reviewDelete() {
+        // given
+        setContextByUsername("bad_test_user");
+        Review review = mockBuildReview();
+        when(reviewRepository.findByIdFetchOther(any())).thenReturn(Optional.of(review));
+
+        // then
+        assertThrows(ReviewAccessDeniedException.class, () -> reviewService.deleteReview(1L));
+
+    }
+
 
     private void setContextByUsername(String username) {
         UserDetails userDetails = new User(username, "123123", new ArrayList<>());
