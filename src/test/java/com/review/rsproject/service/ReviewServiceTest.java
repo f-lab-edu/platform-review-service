@@ -5,6 +5,7 @@ import com.review.rsproject.domain.Platform;
 import com.review.rsproject.domain.Review;
 import com.review.rsproject.dto.request.ReviewEditDto;
 import com.review.rsproject.dto.request.ReviewWriteDto;
+import com.review.rsproject.dto.response.ReviewCountDto;
 import com.review.rsproject.exception.ReviewAccessDeniedException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.repository.PlatformRepository;
@@ -25,7 +26,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,21 +52,18 @@ class ReviewServiceTest {
 
     @Test
     @DisplayName("리뷰 작성")
-    void review_write() {
+    void reviewWrite() {
         // given
-        Member member = new Member(USERNAME, "123123", MemberRole.ROLE_USER);
         setContextByUsername(USERNAME);
 
-        Platform platform = new Platform("네이버", "https://naver.com", "네이버버법", member);
+        Platform platform = mockBuildPlatform();
 
-            // 검증 Mock
+        // 검증 Mock
         when(platformRepository.findById(any())).thenReturn(Optional.of(platform));
-        when(memberRepository.findByUsername(USERNAME)).thenReturn(Optional.of(member));
+        when(memberRepository.findByUsername(USERNAME)).thenReturn(Optional.of(platform.getMember()));
 
             // 플랫폼 평점 업데이트 Mock
-        List<Long[]> reviewData = new ArrayList<>();
-        reviewData.add(new Long[] {1L, 5L}); // 1개의 리뷰, 총 리뷰 점수 합계 5점)
-        when(reviewRepository.findByStar(any())).thenReturn(reviewData);
+        when(reviewRepository.findByStar(any())).thenReturn(new ReviewCountDto(1L, 5L));
 
 
         // when
@@ -80,21 +77,17 @@ class ReviewServiceTest {
 
     @Test
     @DisplayName("리뷰 수정")
-    void review_edit() {
+    void reviewEdit() {
         // given
         setContextByUsername(USERNAME);
-        Member member = new Member(USERNAME, "1111", MemberRole.ROLE_USER);
-        Platform platform = new Platform("네이버", "https://naver.com", "네이버버버버", member);
-        platform.changeInfo(null, PlatformStatus.ACCEPT);
-        Review review = new Review(platform, member, "수정되기 전의 리뷰", (byte) 5);
+
+        Review review = mockBuildReview();
 
 
         when(reviewRepository.findByIdFetchOther(any())).thenReturn(Optional.of(review));
 
-            // 플랫폼 평점 업데이트 Mock
-        List<Long[]> reviewData = new ArrayList<>();
-        reviewData.add(new Long[] {1L, 10L}); // 1개의 리뷰, 총 리뷰 점수 합계 10점)
-        when(reviewRepository.findByStar(any())).thenReturn(reviewData);
+            // 플랫폼 평점 업데이트 Mock, 1개의 리뷰 총점 10점
+        when(reviewRepository.findByStar(any())).thenReturn(new ReviewCountDto(1L, 10L));
 
 
         // when
@@ -109,14 +102,12 @@ class ReviewServiceTest {
 
     @Test
     @DisplayName("리뷰 수정, 다른 사람이 수정하려 하는 경우")
-    void review_edit_other() {
+    void reviewEditOther() {
         // given
         setContextByUsername("bad_test_user");
-        Member member = new Member(USERNAME, "1111", MemberRole.ROLE_USER);
-        Platform platform = new Platform("네이버", "https://naver.com", "네이버버버버", member);
-        platform.changeInfo(null, PlatformStatus.ACCEPT);
-        Review review = new Review(platform, member, "수정되기 전의 리뷰", (byte) 5);
-        
+
+        Review review = mockBuildReview();
+
         when(reviewRepository.findByIdFetchOther(any())).thenReturn(Optional.of(review));
 
 
@@ -132,4 +123,17 @@ class ReviewServiceTest {
         context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()));
     }
 
+
+    private Review mockBuildReview() {
+        Platform platform = mockBuildPlatform();
+        return new Review(platform, platform.getMember(), "평범한 리뷰입니다.", (byte) 5);
+    }
+
+
+
+    private Platform mockBuildPlatform() {
+        Member member = new Member(USERNAME, "1111", MemberRole.ROLE_USER);
+        Platform platform =new Platform("네이버", "https://naver.com", "네이버버버버", member);
+        return platform.changeInfo(platform.getDescription(), PlatformStatus.ACCEPT);
+    }
 }

@@ -5,6 +5,7 @@ import com.review.rsproject.domain.Platform;
 import com.review.rsproject.domain.Review;
 import com.review.rsproject.dto.request.ReviewEditDto;
 import com.review.rsproject.dto.request.ReviewWriteDto;
+import com.review.rsproject.dto.response.ReviewCountDto;
 import com.review.rsproject.exception.PlatformAccessDeniedException;
 import com.review.rsproject.exception.PlatformNotFoundException;
 import com.review.rsproject.exception.ReviewAccessDeniedException;
@@ -76,11 +77,9 @@ public class ReviewServiceImpl implements ReviewService {
     * 플랫폼 평점 갱신
     * */
     private Platform refreshPlatformStar(Platform platform) {
-        List<Long[]> result = reviewRepository.findByStar(platform.getId());
-        Long reviewCount = result.get(0)[0]; // 달린 리뷰의 수
-        Long reviewTotalStar = result.get(0)[1]; // 리뷰 점수의 합계
+        ReviewCountDto result = reviewRepository.findByStar(platform.getId());
 
-        return platform.updateStar(reviewCount, reviewTotalStar); // 플랫폼 평점 업데이트
+        return platform.updateStar(result.getReviewCount(), result.getReviewTotalStar()); // 플랫폼 평점 업데이트
     }
 
 

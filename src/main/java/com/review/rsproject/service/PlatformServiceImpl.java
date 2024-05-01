@@ -105,22 +105,32 @@ public class PlatformServiceImpl implements PlatformService{
                 .status(result.getStatus())
                 .modifiedDt(result.getModifiedDt())
                 .createdDt(result.getCreatedDt()).build();
-
-
-
     }
 
     @Override
     public PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto) {
 
+        // 검색
+        Page<Platform> result = performPlatformSearch(platformSearchDto);
 
+        // 결과 반환
+        return createSearchResultDto(result, platformSearchDto.getQuery());
+    }
+
+
+
+
+    private Page<Platform> performPlatformSearch(PlatformSearchDto platformSearchDto) {
         Pageable pageable = PageRequest.of(platformSearchDto.getPage(), ConstantValues.PAGE_SIZE);
+        return platformRepository.findByQuery(platformSearchDto.getQuery(), pageable, platformSearchDto.getSort());
+    }
 
-        Page<Platform> result = platformRepository.findByQuery(platformSearchDto.getQuery(), pageable, platformSearchDto.getSort());
 
+
+    private PlatformSearchResultDto createSearchResultDto(Page<Platform> result, String query) {
         // dto 생성
         PlatformSearchResultDto searchResult = PlatformSearchResultDto.builder()
-                .query(platformSearchDto.getQuery())
+                .query(query)
                 .nowPage(result.getNumber())
                 .totalPage(result.getTotalPages())
                 .platformCount(result.getContent().size())
@@ -138,8 +148,6 @@ public class PlatformServiceImpl implements PlatformService{
 
             searchResult.getPlatformList().add(dto);
         }
-
-
         return searchResult;
     }
 

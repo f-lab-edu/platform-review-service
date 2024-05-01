@@ -58,7 +58,7 @@ class PlatformServiceTest {
 
     @Test
     @DisplayName("플랫폼 등록")
-    void platform_register() {
+    void platformRegister() {
         // given
         Member member = new Member(username, "1111", MemberRole.ROLE_USER);
 
@@ -83,7 +83,7 @@ class PlatformServiceTest {
 
     @Test
     @DisplayName("플랫폼 등록, 등록자의 유저 정보가 DB에 없는 경우")
-    void platform_register_ex() {
+    void platformRegisterEx() {
         when(memberRepository.findByUsername(any())).thenReturn(Optional.empty());
         setContextByUsername(username);
 
@@ -100,13 +100,13 @@ class PlatformServiceTest {
 
     @Test
     @DisplayName("플랫폼 수정")
-    void platform_edit() {
+    void platformEdit() {
 
         // given
         PlatformEditDto editDto = new PlatformEditDto(1L, "검색 엔진 포털 사이트였는데 바뀌었습니다.", PlatformStatus.ACCEPT);
 
-        Platform original = new Platform("네이버", "https://naver.com", "검색 엔진 포털 사이트입니다.", null);
-        when(platformRepository.findById(1L)).thenReturn(Optional.of(original));
+        Platform platform = mockBuildPlatform(1).get(0);
+        when(platformRepository.findById(1L)).thenReturn(Optional.of(platform));
 
         // when
         Platform resultPlatform = platformService.updatePlatform(editDto);
@@ -120,10 +120,9 @@ class PlatformServiceTest {
 
     @Test
     @DisplayName("특정 플랫폼 조회")
-    void platform_info_check() {
+    void platformInfoCheck() {
         // given
-        Member member = new Member(username, "1111", MemberRole.ROLE_USER);
-        Platform platform = new Platform("네이버", "https://naver.com", "검색 엔진 포털 사이트입니다.", member);
+        Platform platform = mockBuildPlatform(1).get(0);
         when(platformRepository.findByIdAndFetchMember(1L)).thenReturn(Optional.of(platform));
 
         // when
@@ -138,7 +137,7 @@ class PlatformServiceTest {
 
     @Test
     @DisplayName("특정 플랫폼 조회, 플랫폼이 없는 경우")
-    void platform_info_check_ex() {
+    void platformInfoCheckEx() {
         // then
         assertThrows(PlatformNotFoundException.class, () -> platformService.getPlatformInfo(1L));
     }
@@ -146,21 +145,14 @@ class PlatformServiceTest {
 
     @Test
     @DisplayName("플랫폼 검색")
-    void platform_search() {
+    void platformSearch() {
         // given
 
         int totalSize = 13; // 총 데이터 갯수가 13개 라는 가정 하에 테스트
 
-        // Platform 생성
-        Member member = new Member(username, "1111", MemberRole.ROLE_USER);
-        List<Platform> platforms = new ArrayList<>();
-        for(int i = 1; i <= 10; ++i) {
-            platforms.add(new Platform("네이버" + i, "https://naver.com", "검색 엔진 포털 사이트입니다.", member));
-        }
-
         // Page 객체 생성
         Pageable pageable = PageRequest.of(0, ConstantValues.PAGE_SIZE);
-        Page<Platform> platformPage = new PageImpl<>(platforms, pageable, totalSize);
+        Page<Platform> platformPage = new PageImpl<>(mockBuildPlatform(10), pageable, totalSize);
 
         // Mock 설정
         when(platformRepository.findByQuery("네이버", pageable, PlatformSort.DATE_DESC)).thenReturn(platformPage);
@@ -175,6 +167,17 @@ class PlatformServiceTest {
         Assertions.assertThat(result.getPlatformCount()).isEqualTo(10); // 현재 페이지의 데이터 갯수
         Assertions.assertThat(result.getTotalSize()).isEqualTo(totalSize);
 
+
+    }
+
+
+    private List<Platform> mockBuildPlatform(Integer size) {
+        Member member = new Member(username, "1111", MemberRole.ROLE_USER);
+        List<Platform> platforms = new ArrayList<>();
+        for(int i = 1; i <= size; ++i) {
+            platforms.add(new Platform("네이버" + i, "https://naver.com", "검색 엔진 포털 사이트입니다.", member));
+        }
+        return platforms;
 
     }
 

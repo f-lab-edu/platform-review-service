@@ -3,9 +3,12 @@ package com.review.rsproject.repository;
 import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
 import com.review.rsproject.domain.Review;
+import com.review.rsproject.dto.response.ReviewCountDto;
 import com.review.rsproject.type.MemberRole;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ class ReviewRepositoryTest {
     @Autowired MemberRepository memberRepository;
 
     @Test
+    @DisplayName("findByStar() - 플랫폼 리뷰 수랑 리뷰별 합계가 잘 반환되는지")
     void findStar() {
         // given
         Member member = new Member("test", "1111", MemberRole.ROLE_USER);
@@ -41,11 +45,10 @@ class ReviewRepositoryTest {
 
 
         // when
-        List<Long[]> result = reviewRepository.findByStar(platform.getId());
-
+        ReviewCountDto result = reviewRepository.findByStar(platform.getId());
         // then
-        Assertions.assertThat(result.get(0)[0]).isEqualTo(2L); // 리뷰 수
-        Assertions.assertThat(result.get(0)[1]).isEqualTo(12L); // 별점 합계
+        Assertions.assertThat(result.getReviewCount()).isEqualTo(2L); // 리뷰 수
+        Assertions.assertThat(result.getReviewTotalStar()).isEqualTo(12L); // 별점 합계
 
     }
 
