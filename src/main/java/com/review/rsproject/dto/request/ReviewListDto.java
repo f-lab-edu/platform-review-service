@@ -3,12 +3,13 @@ package com.review.rsproject.dto.request;
 
 import com.review.rsproject.type.SortType;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 public class ReviewListDto {
 
     @NotNull
@@ -19,9 +20,10 @@ public class ReviewListDto {
 
     private SortType sort;
 
-    public ReviewListDto() {
+
+    public ReviewListDto()
+    {
         this.sort = SortType.DATE_DESC;
         this.page = 0;
-
     }
 }
