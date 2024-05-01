@@ -25,4 +25,10 @@ public class ReviewController {
         reviewService.updateReview(reviewEditDto);
         return "ok";
     }
+
+    @DeleteMapping("/review")
+    public String removeReview(@RequestParam(name = "id") Long id) {
+        reviewService.deleteReview(id);
+        return "ok";
+    }
 }

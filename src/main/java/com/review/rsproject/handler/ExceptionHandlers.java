@@ -37,7 +37,7 @@ public class ExceptionHandlers {
      * */
     @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class})
     public ResponseEntity<String> jsonEx(Exception ex) {
-        return new ResponseEntity<>("JSON 요청 형식이 맞지 않습니다.", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("요청 형식이 맞지 않습니다.", HttpStatus.BAD_REQUEST);
     }
 
 

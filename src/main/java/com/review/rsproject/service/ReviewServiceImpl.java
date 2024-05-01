@@ -71,6 +71,12 @@ public class ReviewServiceImpl implements ReviewService {
         return review;
     }
 
+    @Override
+    public void deleteReview(Long id) {
+        Review review = validReview(id);
+        reviewRepository.delete(review);
+    }
+
 
 
     /*
@@ -125,7 +131,7 @@ public class ReviewServiceImpl implements ReviewService {
             throw  new ReviewNotFoundException();
         }
 
-        // 리뷰를 작성한 사람과 수정을 요청하는 사람의 아이디가 다른 경우 예외 처리
+        // 리뷰를 작성한 사람과 요청하는 사람의 아이디가 다른 경우 예외 처리
         if (!SecurityContextHolder.getContext().getAuthentication().getName()
                 .equals(review.get().getMember().getUsername())) {
             throw new ReviewAccessDeniedException();
