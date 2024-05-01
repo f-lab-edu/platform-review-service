@@ -72,9 +72,13 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public void deleteReview(Long id) {
         Review review = validReview(id);
         reviewRepository.delete(review);
+
+        refreshPlatformStar(review.getPlatform());
+
     }
 
 
