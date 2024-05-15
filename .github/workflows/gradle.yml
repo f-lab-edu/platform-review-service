@@ -22,6 +22,9 @@ jobs:
 
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v3
+
+    - name: Set db password
+      run: echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" > /src/main/resources/application-password.properties
       
     - name: Build with Gradle
       run: |
