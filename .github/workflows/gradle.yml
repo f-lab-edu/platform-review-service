@@ -51,6 +51,7 @@ jobs:
       
       - name: docker stop container
         run: sudo docker stop runapp
+        continue-on-error: true
   
       - name: docker run new container
         run: sudo docker run --name runapp --rm -dit -p 8080:8080 --link rundb:mydb ${{ secrets.DOCKERHUB_USERNAME }}/application
