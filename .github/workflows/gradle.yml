@@ -1,6 +1,6 @@
 name: Java CI with Gradle
 
-on: # 임시 설정
+on:
   push:
     branches: [ "main" ]
   pull_request:
@@ -12,14 +12,13 @@ jobs:
     permissions:
       contents: read
     steps:
-	# JDK 설치
     - uses: actions/checkout@v4
+    
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
-	# 빌드
     - name: Build with Gradle
       uses: gradle/gradle-build-action@v3
