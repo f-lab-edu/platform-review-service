@@ -42,7 +42,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입")
-    void member_register() {
+    void memberRegister() {
 
         // given
         String password = "123456789a";
@@ -65,7 +65,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입 중복체크")
-    void member_register_duplicate() {
+    void memberRegisterDuplicate() {
         // given
         MemberRegisterDto request = new MemberRegisterDto(username, password);
 

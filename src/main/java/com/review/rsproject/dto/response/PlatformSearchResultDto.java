@@ -28,6 +28,9 @@ public class PlatformSearchResultDto {
     @AllArgsConstructor
     @Data
     public static class dto {
+
+        private Long no;
+
         private String name;
 
         private String description;
