@@ -1,6 +1,6 @@
 package com.review.rsproject.type;
 
-public enum PlatformSort {
+public enum SortType {
 
 
     STAR_DESC("STAR_DESC"),
@@ -10,7 +10,7 @@ public enum PlatformSort {
 
     private final String sort;
 
-    PlatformSort(String sort) {
+    SortType(String sort) {
         this.sort = sort;
     }
 
