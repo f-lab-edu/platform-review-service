@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -25,7 +24,7 @@ public class ReviewListResultDto {
     private Integer totalPage;
     private Long totalReview;
 
-    List<dto> reviewList;
+    List<Dto> reviewList;
 
 
 
@@ -34,8 +33,8 @@ public class ReviewListResultDto {
     @NoArgsConstructor
     @Data
     @Builder
-    public static class dto {
-        private Long no;
+    public static class Dto {
+        private Long reviewNumber;
         private String memberName;
         private String content;
         private Byte star;

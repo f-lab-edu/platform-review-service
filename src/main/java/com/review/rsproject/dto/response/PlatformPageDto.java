@@ -22,14 +22,14 @@ public class PlatformPageDto {
     private Long totalSize;
     private Integer pageSize;
 
-    private List<dto> platformList = new ArrayList<>();
+    private List<Dto> platformList = new ArrayList<>();
 
 
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class dto {
+    public static class Dto {
         private Long id;
 
         private String name;
