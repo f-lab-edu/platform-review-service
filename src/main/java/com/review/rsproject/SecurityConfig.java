@@ -1,29 +1,16 @@
 package com.review.rsproject;
 
 import com.review.rsproject.security.CustomUserDetailsService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.Customizer;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
-
-import java.io.IOException;
 
 
 @EnableWebSecurity
@@ -34,13 +21,16 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
 
+    private static final String UTF8_CONTENT_TYPE = "text/html;charset:UTF-8";
+
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.userDetailsService(customUserDetailsService)
                 .authorizeHttpRequests(auth -> auth.
-                        requestMatchers("/api/review", "/api/platform").
+                        requestMatchers(HttpMethod.GET, "/api/review").permitAll()
+                        .requestMatchers("/api/review", "/api/platform").
                         authenticated().anyRequest().permitAll())
 
                 // 간단한 api 로그인 구현을 위해 csrf 비활성화
@@ -53,7 +43,7 @@ public class SecurityConfig {
 
                 .logout(out -> out.logoutUrl("/api/logout")
                         .logoutSuccessHandler(((request, response, authentication) -> {
-                            response.setContentType("text/html;charset:UTF-8");
+                            response.setContentType(UTF8_CONTENT_TYPE);
                             response.setCharacterEncoding("UTF-8");
                             response.getWriter().write("로그아웃 되었습니다.");
                         })))
@@ -63,12 +53,12 @@ public class SecurityConfig {
                 .exceptionHandling(e ->
                         e.authenticationEntryPoint(
                                 (request, response, authException) -> {
-                                    response.setContentType("text/html;charset:UTF-8");
+                                    response.setContentType(UTF8_CONTENT_TYPE);
                                     response.setCharacterEncoding("UTF-8");
                                     response.getWriter().write("인증이 필요한 요청입니다.");
                                 }
                         ).accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setContentType("text/html;charset:UTF-8");
+                            response.setContentType(UTF8_CONTENT_TYPE);
                             response.setCharacterEncoding("UTF-8");
                             response.getWriter().write("접근 권한이 부족합니다.");
                         })
@@ -88,12 +78,4 @@ public class SecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-
-//    @Bean
-//    public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-//        UserDetails user = User.withUsername("admin")
-//                .password("{noop}1111")
-//                .build();
-//        return new InMemoryUserDetailsManager(user);
-//    }
 }

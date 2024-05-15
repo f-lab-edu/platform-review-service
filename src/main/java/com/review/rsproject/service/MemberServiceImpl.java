@@ -1,7 +1,7 @@
 package com.review.rsproject.service;
 
 import com.review.rsproject.domain.Member;
-import com.review.rsproject.dto.MemberRegisterDto;
+import com.review.rsproject.dto.request.MemberRegisterDto;
 import com.review.rsproject.exception.MemberSignUpException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.type.MemberRole;

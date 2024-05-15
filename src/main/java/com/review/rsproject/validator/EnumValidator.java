@@ -17,16 +17,14 @@ public class EnumValidator implements ConstraintValidator<ValidEnum, Enum> {
             return true;
         }
 
-        boolean result = false;
         Object[] enumValues = this.annotation.enumClass().getEnumConstants();
         if (enumValues != null) {
             for (Object enumValue : enumValues) {
                 if (value == enumValue) {
-                    result = true;
-                    break;
+                    return true;
                 }
             }
         }
-        return result;
+        return false;
     }
 }
