@@ -2,9 +2,9 @@ name: Java CI with Gradle
 
 on: # 임시 설정
   push:
-    branches: [ "cicd" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "cicd" ]
+    branches: [ "main" ]
 
 jobs:
   build:
