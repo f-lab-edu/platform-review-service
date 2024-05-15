@@ -35,7 +35,7 @@ class PlatformRepositoryTest {
 
     @Test
     @DisplayName("플랫폼 대기 상태 조회")
-    void find_status_wait() {
+    void findWaitStatus() {
         // given
         saveBulk(PlatformStatus.WAIT, 12);
         Pageable pageRequest = PageRequest.of(0, ConstantValues.PAGE_SIZE);
@@ -51,7 +51,7 @@ class PlatformRepositoryTest {
 
     @Test
     @DisplayName("플랫폼 승인 상태 조회")
-    void find_status_accept() {
+    void findAcceptStatus() {
         // given
         saveBulk(PlatformStatus.ACCEPT, 12);
         Pageable pageRequest = PageRequest.of(0, ConstantValues.PAGE_SIZE);
@@ -68,7 +68,7 @@ class PlatformRepositoryTest {
 
     @Test
     @DisplayName("플랫폼 거부 상태 조회")
-    void find_status_deny() {
+    void findDenyStatus() {
         // given
         saveBulk(PlatformStatus.DENY, 12);
         Pageable pageRequest = PageRequest.of(0, ConstantValues.PAGE_SIZE);
@@ -85,7 +85,7 @@ class PlatformRepositoryTest {
 
     @Test
     @DisplayName("플랫폼 일반 조회")
-    void find_default() {
+    void findDefault() {
         // given
         saveBulk(PlatformStatus.WAIT, 4);
         saveBulk(PlatformStatus.ACCEPT, 4);

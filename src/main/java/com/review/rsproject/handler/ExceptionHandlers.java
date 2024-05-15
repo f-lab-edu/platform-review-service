@@ -1,7 +1,6 @@
 package com.review.rsproject.handler;
 
-import com.review.rsproject.exception.MemberSignUpException;
-import com.review.rsproject.exception.PlatformNotFoundException;
+import com.review.rsproject.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -9,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -26,18 +26,19 @@ public class ExceptionHandlers {
     /*
      * 커스텀 예외 처리
      * */
-    @ExceptionHandler({MemberSignUpException.class, PlatformNotFoundException.class})
-    public ResponseEntity<String> customEx(Exception ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler({MemberSignUpException.class, PlatformNotFoundException.class,
+            PlatformAccessDeniedException.class, ReviewNotFoundException.class, ReviewAccessDeniedException.class})
+    public ResponseEntity<String> customEx400(Exception ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
     /*
-     * JSON 매칭 예외 처리
+     * 요청 매핑 실패 예외 처리
      * */
-    @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class})
-    public ResponseEntity<String> jsonEx(Exception ex) {
-        return new ResponseEntity<>("JSON 요청 형식이 맞지 않습니다.", HttpStatus.BAD_REQUEST);
+    @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class, MissingServletRequestParameterException.class})
+    public ResponseEntity<String> requestEx(Exception ex) {
+        return new ResponseEntity<>("요청 형식이 맞지 않습니다.", HttpStatus.BAD_REQUEST);
     }
 
 
