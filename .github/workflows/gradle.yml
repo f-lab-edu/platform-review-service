@@ -24,7 +24,9 @@ jobs:
       uses: gradle/gradle-build-action@v3
       
     - name: Build with Gradle
-      run: ./gradlew build
+      run: |
+        chmod +x ./gradlew
+        ./gradlew build
 
     - name: docker image build
       run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/application .
