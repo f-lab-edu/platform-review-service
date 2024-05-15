@@ -6,6 +6,10 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,6 +30,10 @@ public class Platform extends Auditable {
     @Column(length = 50, nullable = false)
     private String description;
 
+    @Column(nullable = false)
+    private Byte star;
+
+
     @Enumerated(EnumType.STRING)
     private PlatformStatus status;
 
@@ -34,12 +42,17 @@ public class Platform extends Auditable {
     private Member member;
 
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "platform")
+    private List<Review> reviews = new ArrayList<>();
+
+
     public Platform(String name, String url, String description, Member member) {
         this.name = name;
         this.url = url;
         this.description = description;
         this.member = member;
         this.status = PlatformStatus.WAIT;
+        this.star = 0;
     }
 
     public Platform changeInfo(String description, PlatformStatus status) {
@@ -49,6 +62,11 @@ public class Platform extends Auditable {
         if (status != null) {
             this.status = status;
         }
+        return this;
+    }
+
+    public Platform updateStar(Long reviewCount, Long totalStar) {
+        this.star = (byte) (totalStar / reviewCount);
         return this;
     }
 

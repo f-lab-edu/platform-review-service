@@ -1,19 +1,16 @@
 package com.review.rsproject.service;
 
 import com.review.rsproject.domain.Member;
-import com.review.rsproject.dto.MemberRegisterDto;
+import com.review.rsproject.dto.request.MemberRegisterDto;
 import com.review.rsproject.exception.MemberSignUpException;
 import com.review.rsproject.repository.MemberRepository;
 import com.review.rsproject.type.MemberRole;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
@@ -45,7 +42,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입")
-    void member_register() {
+    void memberRegister() {
 
         // given
         String password = "123456789a";
@@ -68,7 +65,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입 중복체크")
-    void member_register_duplicate() {
+    void memberRegisterDuplicate() {
         // given
         MemberRegisterDto request = new MemberRegisterDto(username, password);
 

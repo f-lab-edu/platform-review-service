@@ -1,4 +1,4 @@
-package com.review.rsproject.dto;
+package com.review.rsproject.dto.response;
 
 
 import com.review.rsproject.type.PlatformStatus;
