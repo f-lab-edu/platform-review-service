@@ -4,6 +4,7 @@ import com.review.rsproject.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,7 +29,8 @@ public class SecurityConfig {
 
         http.userDetailsService(customUserDetailsService)
                 .authorizeHttpRequests(auth -> auth.
-                        requestMatchers("/api/review", "/api/platform").
+                        requestMatchers(HttpMethod.GET, "/api/review").permitAll()
+                        .requestMatchers("/api/review", "/api/platform").
                         authenticated().anyRequest().permitAll())
 
                 // 간단한 api 로그인 구현을 위해 csrf 비활성화
