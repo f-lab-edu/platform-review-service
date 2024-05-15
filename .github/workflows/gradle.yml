@@ -23,38 +23,46 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v3
 
+      # db 패스워드 파일 추가
     - name: Set db password
-      run: echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" > /src/main/resources/application-password.properties
-      
+      run: echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" > ./src/main/resources/application-password.properties
+
+      # 빌드
     - name: Build with Gradle
       run: |
         chmod +x ./gradlew
         ./gradlew build
 
+      # 도커 이미지 빌드
     - name: docker image build
       run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/application .
-      
+
+      # 도커 로그인
     - name: docker login
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # 도커허브에 이미지 PUSH
     - name: docker image push
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/application
       
-      
+  
   run-docker-image-on-ec2:
     needs: build
     runs-on: self-hosted
     
     steps:
+        # 이미지 가져오기
       - name: docker image pull
         run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/application
-      
+
+      # 기존 컨테이너 중지
       - name: docker stop container
         run: sudo docker stop runapp
         continue-on-error: true
-  
+
+      # 컨테이너 실행
       - name: docker run new container
         run: sudo docker run --name runapp --rm -dit -p 8080:8080 --link rundb:mydb ${{ secrets.DOCKERHUB_USERNAME }}/application
