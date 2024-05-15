@@ -39,3 +39,18 @@ jobs:
 
     - name: docker image push
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/application
+      
+      
+  run-docker-image-on-ec2:
+    needs: build
+    runs-on: self-hosted
+    
+    steps:
+      - name: docker image pull
+        run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/application
+      
+      - name: docker stop container
+        run: sudo docker stop runapp
+  
+      - name: docker run new container
+        run: sudo docker run --name runapp --rm -dit -p 8080:8080 --link rundb:mydb ${{ secrets.DOCKERHUB_USERNAME }}/application
