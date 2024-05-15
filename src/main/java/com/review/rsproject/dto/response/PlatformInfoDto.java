@@ -2,6 +2,7 @@ package com.review.rsproject.dto.response;
 
 
 import com.review.rsproject.type.PlatformStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
