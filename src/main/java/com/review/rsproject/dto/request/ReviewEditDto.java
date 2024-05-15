@@ -2,6 +2,7 @@ package com.review.rsproject.dto.request;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -13,21 +14,21 @@ import org.hibernate.validator.constraints.Range;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "리뷰 작성 DTO")
-public class ReviewWriteDto {
+@Schema(description = "리뷰 수정 DTO")
+public class ReviewEditDto {
 
     @NotNull
-    @Schema(description = "리뷰 작성할 플랫폼 ID")
+    @Schema(defaultValue = "수정할 리뷰 ID")
     private Long id;
 
-    @Length(max = 500)
     @NotBlank
-    @Schema(description = "리뷰 내용")
+    @Length(max = 500)
+    @Schema(description = "수정할 내용")
     private String content;
 
     @NotNull
     @Range(min = 1, max = 10)
-    @Schema(description = "별점 1 ~ 10")
+    @Schema(description = "수정할 별점")
     private Byte star;
 
 }

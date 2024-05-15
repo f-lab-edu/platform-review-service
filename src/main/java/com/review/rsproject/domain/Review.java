@@ -36,4 +36,10 @@ public class Review extends Auditable {
 
         platform.getReviews().add(this);
     }
+
+    public Review changeInfo(String content, Byte star) {
+        this.content = content;
+        this.star = star;
+        return this;
+    }
 }
