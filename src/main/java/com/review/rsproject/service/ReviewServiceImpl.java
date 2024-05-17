@@ -1,7 +1,5 @@
 package com.review.rsproject.service;
 
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.review.rsproject.common.ConstantValues;
 import com.review.rsproject.domain.Member;
 import com.review.rsproject.domain.Platform;
@@ -33,8 +31,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static com.review.rsproject.domain.QPlatform.platform;
-
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +44,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public Review addReview(ReviewWriteDto reviewWriteDto) {
-        Member member = validMember();
-        Platform platform = validPlatform(reviewWriteDto.getId());
+        Member member = validateMember();
+        Platform platform = validatePlatform(reviewWriteDto.getId());
 
 
         // 리뷰 저장
@@ -68,7 +64,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Review updateReview(ReviewEditDto reviewEditDto) {
 
         // 리뷰의 수정 요청이 올바른지 검증
-        Review review = validReview(reviewEditDto.getId());
+        Review review = validateReview(reviewEditDto.getId());
         Byte oldStar = review.getStar();
 
         // 리뷰 수정
@@ -85,7 +81,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void deleteReview(Long id) {
-        Review review = validReview(id);
+        Review review = validateReview(id);
         reviewRepository.delete(review);
 
         refreshPlatformStar(review.getPlatform());
@@ -94,7 +90,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewListResultDto getReviewList(ReviewListDto reviewListDto) {
-        Platform platform = validPlatform(reviewListDto.getId());
+        Platform platform = validatePlatform(reviewListDto.getId());
         
         Pageable pageRequest = PageRequest.of(reviewListDto.getPage(), ConstantValues.PAGE_SIZE, sortConverter(reviewListDto.getSort()));
         Page<Review> reviews = reviewRepository.findByIdFromPlatform(platform.getId(), pageRequest);
@@ -116,8 +112,8 @@ public class ReviewServiceImpl implements ReviewService {
                 .totalPage(reviews.getTotalPages()).build();
 
         for (Review review : reviews.getContent()) {
-            ReviewListResultDto.dto dto = ReviewListResultDto.dto.builder()
-                    .no(review.getId())
+            ReviewListResultDto.Dto dto = ReviewListResultDto.Dto.builder()
+                    .reviewNumber(review.getId())
                     .memberName(review.getMember().getUsername())
                     .content(review.getContent())
                     .star(review.getStar())
@@ -154,7 +150,7 @@ public class ReviewServiceImpl implements ReviewService {
     /*
      *  요청에 대한 멤버 검증 메서드
      */
-    private Member validMember() {
+    private Member validateMember() {
         String memberName = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Optional<Member> member = memberRepository.findByUsername(memberName);
@@ -168,7 +164,7 @@ public class ReviewServiceImpl implements ReviewService {
     /*
     *   플랫폼 검증 메서드
      */
-    private Platform validPlatform(Long platformId) {
+    private Platform validatePlatform(Long platformId) {
         Optional<Platform> platform = platformRepository.findById(platformId);
 
         if (platform.isEmpty()) {
@@ -186,7 +182,7 @@ public class ReviewServiceImpl implements ReviewService {
     * 리뷰 검증 메서드
     * */
 
-    private Review validReview(Long reviewId) {
+    private Review validateReview(Long reviewId) {
         Optional<Review> review = reviewRepository.findByIdFetchOther(reviewId);
 
         if (review.isEmpty()) {

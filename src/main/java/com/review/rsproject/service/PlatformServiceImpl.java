@@ -81,7 +81,7 @@ public class PlatformServiceImpl implements PlatformService{
 
         // entity to dto
         platform.getContent().forEach(p ->
-                platformPageDto.getPlatformList().add(new PlatformPageDto.dto(p.getId(), p.getName(), p.getStatus()))
+                platformPageDto.getPlatformList().add(new PlatformPageDto.Dto(p.getId(), p.getName(), p.getStatus()))
         );
 
         return platformPageDto;
@@ -139,8 +139,8 @@ public class PlatformServiceImpl implements PlatformService{
 
         // entity -> dto 매핑
         for (Platform platform : result.getContent()) {
-            PlatformSearchResultDto.dto dto = PlatformSearchResultDto.dto.builder()
-                    .no(platform.getId())
+            PlatformSearchResultDto.Dto dto = PlatformSearchResultDto.Dto.builder()
+                    .reviewNumber(platform.getId())
                     .star(platform.getStar())
                     .reviewCount(platform.getReviews().size())
                     .name(platform.getName())

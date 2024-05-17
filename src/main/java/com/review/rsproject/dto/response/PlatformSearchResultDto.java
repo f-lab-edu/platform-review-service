@@ -19,7 +19,7 @@ public class PlatformSearchResultDto {
     private Long totalSize;
     private Integer platformCount;
 
-    private List<dto> platformList;
+    private List<Dto> platformList;
 
 
 
@@ -27,9 +27,9 @@ public class PlatformSearchResultDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Data
-    public static class dto {
+    public static class Dto {
 
-        private Long no;
+        private Long reviewNumber;
 
         private String name;
 
