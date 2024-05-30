@@ -18,6 +18,7 @@ import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.repository.ReviewRepository;
 import com.review.rsproject.type.PlatformStatus;
 import com.review.rsproject.type.SortType;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
     private final PlatformRepository platformRepository;
+    private final EntityManager entityManager;
 
     @Override
     @Transactional
@@ -82,6 +84,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public void deleteReview(Long id) {
         Review review = validateReview(id);
+
         reviewRepository.delete(review);
 
         refreshPlatformStar(review.getPlatform());

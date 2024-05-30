@@ -66,7 +66,7 @@ public class Platform extends Auditable {
     }
 
     public Platform updateStar(Long reviewCount, Long totalStar) {
-        this.star = (byte) (totalStar / reviewCount);
+        this.star = (reviewCount == 0L) ? (byte) 0 : (byte) (totalStar / reviewCount);
         return this;
     }
 
