@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.review.rsproject.common.CommonUtils.setContextByUsername;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -91,12 +92,6 @@ class PlatformServiceTest {
 
     }
 
-    private void setContextByUsername(String _username) {
-        UserDetails userDetails = new User(_username, "1111", new ArrayList<>());
-
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()));
-    }
 
     @Test
     @DisplayName("플랫폼 수정")

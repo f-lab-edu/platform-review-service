@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.review.rsproject.common.CommonUtils.setContextByUsername;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -124,7 +125,7 @@ class ReviewServiceTest {
 
     @Test
     @DisplayName("리뷰 삭제, 다른 사람이 삭제하려는 경우")
-    void reviewDelete() {
+    void reviewDeleteOther() {
         // given
         setContextByUsername("bad_test_user");
         Review review = mockBuildReview();
@@ -165,13 +166,6 @@ class ReviewServiceTest {
 
     }
 
-
-    private void setContextByUsername(String username) {
-        UserDetails userDetails = new User(username, "123123", new ArrayList<>());
-
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities()));
-    }
 
 
     private Review mockBuildReview() {
