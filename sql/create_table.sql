@@ -14,7 +14,8 @@ CREATE TABLE `platform` (
 	`created_dt`	datetime	NOT NULL,
 	`modified_dt`	datetime	NOT NULL,
 	`status`	enum('WAIT', 'ACCEPT', 'DENY')	NOT NULL,
-	`star`	tinyint	NOT NULL
+	`star`	tinyint	NOT NULL,
+	`version`	bigint	NOT NULL
 );
 
 CREATE TABLE `review` (
