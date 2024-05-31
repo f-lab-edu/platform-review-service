@@ -28,6 +28,7 @@ public class Review extends Auditable {
     @JoinColumn(name = "platform_id", nullable = false)
     private Platform platform;
 
+
     public Review(Platform platform, Member member, String content, Byte star) {
         this.content = content;
         this.star = star;

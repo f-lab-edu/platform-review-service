@@ -45,6 +45,9 @@ public class Platform extends Auditable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "platform")
     private List<Review> reviews = new ArrayList<>();
 
+    @Version
+    private Long version;
+
 
     public Platform(String name, String url, String description, Member member) {
         this.name = name;
