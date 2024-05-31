@@ -15,6 +15,7 @@ import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.repository.ReviewRepository;
 import com.review.rsproject.type.PlatformStatus;
 import jakarta.persistence.EntityManager;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +35,8 @@ public class ReviewPersistenceManager {
     private final ReviewRepository reviewRepository;
     private final PlatformRepository platformRepository;
     private final EntityManager entityManager;
+
+
 
     @Transactional
     public void validateAndDeleteReview(Long id) {
