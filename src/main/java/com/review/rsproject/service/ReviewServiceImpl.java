@@ -49,7 +49,6 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    @Transactional
     public Review updateReview(ReviewEditDto reviewEditDto) {
         while (true) {
             try {
