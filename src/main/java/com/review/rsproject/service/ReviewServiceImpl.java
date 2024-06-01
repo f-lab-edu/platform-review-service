@@ -13,6 +13,7 @@ import com.review.rsproject.repository.ReviewRepository;
 import com.review.rsproject.type.SortType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -77,6 +78,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
+    @Cacheable(value = "reviews", key = "#reviewListDto.id + '#' + #reviewListDto.page", cacheManager = "redisCacheManager")
     public ReviewListResultDto getReviewList(ReviewListDto reviewListDto) {
 
         Platform platform = reviewPersistenceManager.validatePlatform(reviewListDto.getId());
