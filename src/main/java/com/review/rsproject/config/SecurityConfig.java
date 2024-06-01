@@ -1,4 +1,4 @@
-package com.review.rsproject;
+package com.review.rsproject.config;
 
 import com.review.rsproject.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;

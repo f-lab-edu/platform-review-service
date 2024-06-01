@@ -1,4 +1,4 @@
-package com.review.rsproject;
+package com.review.rsproject.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
