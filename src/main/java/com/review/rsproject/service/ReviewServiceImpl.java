@@ -1,5 +1,6 @@
 package com.review.rsproject.service;
 
+import com.review.rsproject.annotation.Retry;
 import com.review.rsproject.common.ConstantValues;
 import com.review.rsproject.domain.Platform;
 import com.review.rsproject.domain.Review;
@@ -25,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
+import static com.review.rsproject.common.ConstantValues.*;
+
 
 @Service
 @RequiredArgsConstructor
@@ -36,49 +39,30 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final CacheControlManager cacheControlManagerc;
 
+
+
+
     @Override
+    @Retry
     public Review addReview(ReviewWriteDto reviewWriteDto) {
-        while (true) {
-            try {
-                return reviewPersistenceManager.validateAndWriteReview(reviewWriteDto);
-            }
-            catch (ObjectOptimisticLockingFailureException ignored) {
-
-            }
-        }
+        return reviewPersistenceManager.validateAndWriteReview(reviewWriteDto);
     }
 
 
 
     @Override
+    @Retry
     public Review updateReview(ReviewEditDto reviewEditDto) {
-        while (true) {
-            try {
-                Review review = reviewPersistenceManager.validateAndUpdateReview(reviewEditDto);
-                removeCache(review.getPlatform().getId());
-                return review;
-            }
-            catch (ObjectOptimisticLockingFailureException ignored) {
-            }
-        }
-
-
+            Review review = reviewPersistenceManager.validateAndUpdateReview(reviewEditDto);
+            removeCache(review.getPlatform().getId());
+            return review;
     }
 
     @Override
+    @Retry
     public void deleteReview(Long reviewId) {
-
-        while (true) {
-            try {
-                Long platformId = reviewPersistenceManager.validateAndDeleteReview(reviewId);
-                removeCache(platformId);
-                break;
-            }
-            catch (ObjectOptimisticLockingFailureException ignored) {
-            }
-        }
-
-
+            Long platformId = reviewPersistenceManager.validateAndDeleteReview(reviewId);
+            removeCache(platformId);
     }
 
 
@@ -88,7 +72,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         Platform platform = reviewPersistenceManager.validatePlatform(reviewListDto.getId());
 
-        Pageable pageRequest = PageRequest.of(reviewListDto.getPage(), ConstantValues.PAGE_SIZE, sortConverter(reviewListDto.getSort()));
+        Pageable pageRequest = PageRequest.of(reviewListDto.getPage(), PAGE_SIZE, sortConverter(reviewListDto.getSort()));
         Page<Review> reviews = reviewRepository.findByIdFromPlatform(platform.getId(), pageRequest);
 
 
@@ -125,7 +109,7 @@ public class ReviewServiceImpl implements ReviewService {
     * 플랫폼 ID에 해당하는 리뷰 캐시 삭제
      */
     private void removeCache(Long platformId) {
-        String pattern = ConstantValues.REVIEW_CACHE + "::" + String.valueOf(platformId);
+        String pattern = REVIEW_CACHE + "::" + String.valueOf(platformId);
         cacheControlManagerc.evictCacheByPattern(pattern);
     }
 
