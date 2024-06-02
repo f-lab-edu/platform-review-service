@@ -20,11 +20,11 @@ public class ReviewListDto {
     private Long id;
 
     @NotNull
-    @Schema(description = "페이지 번호", defaultValue = "0")
+    @Schema(description = "페이지 번호")
     private Integer page;
 
     @ValidEnum(enumClass = SortType.class)
-    @Schema(description = "정렬 옵션", defaultValue = "DATE_DCES")
+    @Schema(description = "정렬 옵션")
     private SortType sort;
 
 

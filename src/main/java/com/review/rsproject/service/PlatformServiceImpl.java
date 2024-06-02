@@ -15,6 +15,7 @@ import com.review.rsproject.repository.PlatformRepository;
 import com.review.rsproject.type.PlatformStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -108,6 +109,7 @@ public class PlatformServiceImpl implements PlatformService{
     }
 
     @Override
+    @Cacheable(value = "search_results", key = "#platformSearchDto.query + '#' + #platformSearchDto.page", cacheManager = "redisCacheManager")
     public PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto) {
 
         // 검색
