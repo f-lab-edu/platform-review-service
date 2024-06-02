@@ -39,13 +39,14 @@ public class ReviewPersistenceManager {
 
 
     @Transactional
-    public void validateAndDeleteReview(Long id) {
+    public Long validateAndDeleteReview(Long id) {
         Review review = validateReview(id);
 
         reviewRepository.delete(review);
 
 
-        refreshPlatformStar(review.getPlatform());
+        Platform platform = refreshPlatformStar(review.getPlatform());
+        return platform.getId();
     }
 
 

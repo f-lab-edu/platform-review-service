@@ -121,7 +121,6 @@ public class PlatformServiceImpl implements PlatformService{
 
 
 
-
     private Page<Platform> performPlatformSearch(PlatformSearchDto platformSearchDto) {
         Pageable pageable = PageRequest.of(platformSearchDto.getPage(), ConstantValues.PAGE_SIZE);
         return platformRepository.findByQuery(platformSearchDto.getQuery(), pageable, platformSearchDto.getSort());

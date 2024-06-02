@@ -34,6 +34,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewPersistenceManager reviewPersistenceManager;
     private final ReviewRepository reviewRepository;
+    private final CacheControlManager cacheControlManagerc;
 
     @Override
     public Review addReview(ReviewWriteDto reviewWriteDto) {
@@ -53,32 +54,36 @@ public class ReviewServiceImpl implements ReviewService {
     public Review updateReview(ReviewEditDto reviewEditDto) {
         while (true) {
             try {
-                return reviewPersistenceManager.validateAndUpdateReview(reviewEditDto);
+                Review review = reviewPersistenceManager.validateAndUpdateReview(reviewEditDto);
+                removeCache(review.getPlatform().getId());
+                return review;
             }
             catch (ObjectOptimisticLockingFailureException ignored) {
             }
         }
 
+
     }
 
     @Override
-    public void deleteReview(Long id) {
+    public void deleteReview(Long reviewId) {
 
         while (true) {
             try {
-                reviewPersistenceManager.validateAndDeleteReview(id);
+                Long platformId = reviewPersistenceManager.validateAndDeleteReview(reviewId);
+                removeCache(platformId);
                 break;
             }
             catch (ObjectOptimisticLockingFailureException ignored) {
             }
         }
 
+
     }
 
 
-
     @Override
-    @Cacheable(value = "reviews", key = "#reviewListDto.id + '#' + #reviewListDto.page", cacheManager = "redisCacheManager")
+    @Cacheable(value = "reviews", key = "#reviewListDto.id + '#' + #reviewListDto.page + '#' + #reviewListDto.sort", cacheManager = "redisCacheManager")
     public ReviewListResultDto getReviewList(ReviewListDto reviewListDto) {
 
         Platform platform = reviewPersistenceManager.validatePlatform(reviewListDto.getId());
@@ -114,6 +119,17 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return result;
     }
+
+
+    /*
+    * 플랫폼 ID에 해당하는 리뷰 캐시 삭제
+     */
+    private void removeCache(Long platformId) {
+        String pattern = ConstantValues.REVIEW_CACHE + "::" + String.valueOf(platformId);
+        cacheControlManagerc.evictCacheByPattern(pattern);
+    }
+
+
 
 
     /*
