@@ -1,11 +1,13 @@
 package com.prs.ps.service;
 
 
+import com.prs.ps.client.MemberServiceClient;
 import com.prs.ps.common.ConstantValues;
 import com.prs.ps.domain.Platform;
 import com.prs.ps.dto.request.PlatformApplyDto;
 import com.prs.ps.dto.request.PlatformEditDto;
 import com.prs.ps.dto.request.PlatformSearchDto;
+import com.prs.ps.dto.response.MemberInfoDto;
 import com.prs.ps.dto.response.PlatformInfoDto;
 import com.prs.ps.dto.response.PlatformPageDto;
 import com.prs.ps.dto.response.PlatformSearchResultDto;
@@ -14,6 +16,7 @@ import com.prs.ps.repository.PlatformRepository;
 import com.prs.ps.type.PlatformStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,24 +27,19 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PlatformServiceImpl implements PlatformService {
 
     private final PlatformRepository platformRepository;
+    private final MemberServiceClient memberServiceClient;
 
     @Override
     public Platform addPlatform(PlatformApplyDto applyDto) {
 
+        MemberInfoDto memberInfo = memberServiceClient.getMemberInfo();
 
-        // 멤버 정보 가져오는 로직이 구현되어야 함.
-        //       String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        //       Optional<Member> member = memberRepository.findByUsername(username);
-
-        //       if (member.isEmpty()) {
-        //           throw new UsernameNotFoundException("요청에 대한 유저 정보를 조회할 수 없습니다.");
-        //       }
-
-        Platform platform = new Platform(applyDto.getName(), applyDto.getUrl(), applyDto.getDescription(), 1L);
+        Platform platform = new Platform(applyDto.getName(), applyDto.getUrl(), applyDto.getDescription(), memberInfo.getMemberId());
 
         return platformRepository.save(platform);
     }
