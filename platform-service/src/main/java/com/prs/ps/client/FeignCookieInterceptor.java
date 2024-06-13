@@ -16,7 +16,7 @@ public class FeignCookieInterceptor implements RequestInterceptor {
         Cookie[] cookeStore = request.getCookies();
 
 
-        if (cookeStore.length > 0) {
+        if (cookeStore != null && cookeStore.length > 0) {
             StringBuilder cookieHeaders = new StringBuilder();
             for (Cookie cookie : cookeStore) {
                 cookieHeaders.append(cookie.getName() + "=" + cookie.getValue() + ";");

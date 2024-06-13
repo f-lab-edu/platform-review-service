@@ -25,7 +25,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member register(MemberRegisterDto memberRegisterDto) {
 
-
         // 유저 이름 중복여부 체크
         duplicate(memberRegisterDto.getUsername());
 
@@ -38,6 +37,17 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.save(member);
 
     }
+
+
+    @Override
+    public MemberResponseDto getMemberInfo() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Member member = validateMember(username);
+        return new MemberResponseDto(member.getId(), member.getUsername());
+
+    }
+
 
 
     private void duplicate(String username) {
@@ -54,14 +64,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-    @Override
-    public MemberResponseDto getMemberInfo() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Member member = validateMember(username);
-        return new MemberResponseDto(member.getId(), member.getUsername());
-
-    }
 
 
 }

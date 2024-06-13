@@ -1,6 +1,7 @@
 package com.prs.ms.handler;
 
 
+import com.prs.ms.exception.MemberNotFoundException;
 import com.prs.ms.exception.MemberSignUpException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -27,8 +28,8 @@ public class ExceptionHandlers {
     /*
      * 커스텀 예외 처리
      * */
-    @ExceptionHandler({MemberSignUpException.class})
-    public ResponseEntity<String> customEx400(Exception ex) {
+    @ExceptionHandler({MemberSignUpException.class, MemberNotFoundException.class})
+    public ResponseEntity<String> customEx(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

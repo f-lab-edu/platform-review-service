@@ -28,7 +28,7 @@ public class ExceptionHandlers {
     /*
      * 커스텀 예외 처리
      * */
-    @ExceptionHandler({PlatformNotFoundException.class, PlatformAccessDeniedException.class})
+    @ExceptionHandler({PlatformNotFoundException.class, PlatformAccessDeniedException.class, PlatformCreationException.class})
     public ResponseEntity<String> customEx400(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
