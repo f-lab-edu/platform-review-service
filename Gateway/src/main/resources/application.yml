@@ -7,24 +7,17 @@ spring:
         - id: member-service
           uri: lb://MEMBER-SERVICE
           predicates:
-            - Path=/member-service/**
-          filters:
-            - RewritePath=/member-service/(?<segment>.*), /$\{segment}
+            - Path=/api/login, /api/sign-up, /api/logout
 
         - id: platform-service
           uri: lb://PLATFORM-SERVICE
           predicates:
-            - Path=/platform-service/**
-          filters:
-            - RewritePath=/platform-service/(?<segment>.*), /$\{segment}
-
+            - Path=/api/platform, /api/platforms, /api/platform/**
 
         - id: review-service
           uri: lb://REVIEW-SERVICE
           predicates:
-            - Path=/review-service/**
-          filters:
-            - RewritePath=/review-service/(?<segment>.*), /$\{segment}
+            - Path=/api/review
 
 server:
   port: 8080
