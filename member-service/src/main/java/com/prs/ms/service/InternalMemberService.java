@@ -4,7 +4,7 @@ import com.prs.ms.dto.MemberResponseDto;
 
 public interface InternalMemberService {
 
-    MemberResponseDto getMemberInfo();
-
+    MemberResponseDto findMemberInfo();
+    MemberResponseDto findMemberInfoById(Long memberId);
     Boolean checkAdmin();
 }

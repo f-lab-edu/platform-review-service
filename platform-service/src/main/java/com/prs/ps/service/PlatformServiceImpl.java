@@ -11,7 +11,6 @@ import com.prs.ps.dto.response.MemberInfoDto;
 import com.prs.ps.dto.response.PlatformInfoDto;
 import com.prs.ps.dto.response.PlatformPageDto;
 import com.prs.ps.dto.response.PlatformSearchResultDto;
-import com.prs.ps.exception.PlatformAccessDeniedException;
 import com.prs.ps.exception.PlatformNotFoundException;
 import com.prs.ps.repository.PlatformRepository;
 import com.prs.ps.type.PlatformStatus;
@@ -87,13 +86,13 @@ public class PlatformServiceImpl implements PlatformService {
     public PlatformInfoDto getPlatformInfo(Long id) {
         Optional<Platform> platform = platformRepository.findById(id);
 
-        if (platform.isEmpty()) {
-            throw new PlatformNotFoundException();
-        }
 
-        MemberInfoDto memberInfo = memberServiceClient.getMemberInfo();
+        Platform result = platform.orElseThrow(PlatformNotFoundException::new);
 
-        Platform result = platform.get();
+
+        MemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(result.getMemberId());
+
+
 
         return PlatformInfoDto.builder()
                 .platformName(result.getName())
