@@ -13,4 +13,7 @@ public interface MemberServiceClient {
     @GetMapping("/api/member")
     MemberInfoDto getMemberInfo();
 
+    @GetMapping("/api/auth/check-admin")
+    Boolean checkAdmin();
+
 }

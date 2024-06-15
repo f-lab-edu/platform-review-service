@@ -7,6 +7,4 @@ import com.prs.ms.dto.MemberResponseDto;
 public interface MemberService {
 
     Member register(MemberRegisterDto memberRegisterDto);
-
-    MemberResponseDto getMemberInfo();
 }

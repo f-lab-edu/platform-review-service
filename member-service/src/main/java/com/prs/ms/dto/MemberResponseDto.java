@@ -9,6 +9,4 @@ public class MemberResponseDto {
 
     private Long memberId;
     private String name;
-    private Boolean admin;
-
 }
