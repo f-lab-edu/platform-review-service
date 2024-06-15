@@ -27,6 +27,8 @@ public class InternalMemberController {
     }
 
 
+
+
     @GetMapping("/auth/check-admin")
     public Boolean checkAdmin() {
         return internalMemberService.checkAdmin();

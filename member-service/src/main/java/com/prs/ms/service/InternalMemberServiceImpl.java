@@ -7,10 +7,8 @@ import com.prs.ms.repository.MemberRepository;
 import com.prs.ms.type.MemberRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -32,6 +30,9 @@ public class InternalMemberServiceImpl implements InternalMemberService {
         return new MemberResponseDto(member.getId(), member.getUsername());
 
     }
+    
+
+
 
     @Override
     public Boolean checkAdmin() {
