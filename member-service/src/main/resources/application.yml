@@ -7,7 +7,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://mydb:3306/fluence
     username: root
-    password: as33as33
+
+  profiles:
+    include: password
 
   jpa:
     hibernate:
