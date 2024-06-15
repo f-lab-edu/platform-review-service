@@ -11,13 +11,13 @@ import com.prs.ps.dto.response.MemberInfoDto;
 import com.prs.ps.dto.response.PlatformInfoDto;
 import com.prs.ps.dto.response.PlatformPageDto;
 import com.prs.ps.dto.response.PlatformSearchResultDto;
+import com.prs.ps.exception.PlatformAccessDeniedException;
 import com.prs.ps.exception.PlatformNotFoundException;
 import com.prs.ps.repository.PlatformRepository;
 import com.prs.ps.type.PlatformStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +47,6 @@ public class PlatformServiceImpl implements PlatformService {
     @Override
     @Transactional
     public Platform updatePlatform(PlatformEditDto editDto) {
-
         Long id = editDto.getId();
         Optional<Platform> platform = platformRepository.findById(id);
 
@@ -92,14 +91,14 @@ public class PlatformServiceImpl implements PlatformService {
             throw new PlatformNotFoundException();
         }
 
-        // 멤버 이름을 가져오는 로직이 구현되어야 한다.
+        MemberInfoDto memberInfo = memberServiceClient.getMemberInfo();
 
         Platform result = platform.get();
 
         return PlatformInfoDto.builder()
                 .platformName(result.getName())
                 .description(result.getDescription())
-                .memberName("testuser")
+                .memberName(memberInfo.getName())
                 .url(result.getUrl())
                 .status(result.getStatus())
                 .modifiedDt(result.getModifiedDt())
@@ -107,7 +106,6 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     @Override
-    // @Cacheable(value = "search_results", key = "#platformSearchDto.query + '#' + #platformSearchDto.page", cacheManager = "redisCacheManager")
     public PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto) {
 
         // 검색

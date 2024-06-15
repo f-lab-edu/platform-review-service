@@ -44,7 +44,7 @@ public class MemberServiceImpl implements MemberService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Member member = validateMember(username);
-        return new MemberResponseDto(member.getId(), member.getUsername());
+        return new MemberResponseDto(member.getId(), member.getUsername(), member.getRole() == MemberRole.ROLE_ADMIN);
 
     }
 
