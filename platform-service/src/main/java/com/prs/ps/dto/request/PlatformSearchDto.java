@@ -1,7 +1,5 @@
 package com.prs.ps.dto.request;
 
-
-
 import com.prs.ps.type.SortType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +23,6 @@ public class PlatformSearchDto {
     private SortType sort;
 
     public PlatformSearchDto() {
-
         this.page = 0;
         this.sort = SortType.DATE_ASC;
 
