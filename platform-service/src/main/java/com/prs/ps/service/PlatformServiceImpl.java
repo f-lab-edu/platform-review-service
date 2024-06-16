@@ -17,7 +17,6 @@ import com.prs.ps.type.PlatformStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +46,6 @@ public class PlatformServiceImpl implements PlatformService {
     @Override
     @Transactional
     public Platform updatePlatform(PlatformEditDto editDto) {
-
         Long id = editDto.getId();
         Optional<Platform> platform = platformRepository.findById(id);
 
@@ -88,18 +86,18 @@ public class PlatformServiceImpl implements PlatformService {
     public PlatformInfoDto getPlatformInfo(Long id) {
         Optional<Platform> platform = platformRepository.findById(id);
 
-        if (platform.isEmpty()) {
-            throw new PlatformNotFoundException();
-        }
 
-        // 멤버 이름을 가져오는 로직이 구현되어야 한다.
+        Platform result = platform.orElseThrow(PlatformNotFoundException::new);
 
-        Platform result = platform.get();
+
+        MemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(result.getMemberId());
+
+
 
         return PlatformInfoDto.builder()
                 .platformName(result.getName())
                 .description(result.getDescription())
-                .memberName("testuser")
+                .memberName(memberInfo.getName())
                 .url(result.getUrl())
                 .status(result.getStatus())
                 .modifiedDt(result.getModifiedDt())
@@ -107,7 +105,6 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     @Override
-    // @Cacheable(value = "search_results", key = "#platformSearchDto.query + '#' + #platformSearchDto.page", cacheManager = "redisCacheManager")
     public PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto) {
 
         // 검색

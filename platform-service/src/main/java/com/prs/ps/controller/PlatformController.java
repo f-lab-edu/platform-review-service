@@ -1,6 +1,7 @@
 package com.prs.ps.controller;
 
 
+import com.prs.ps.annotation.RequiresPermission;
 import com.prs.ps.dto.request.PlatformApplyDto;
 import com.prs.ps.dto.request.PlatformEditDto;
 import com.prs.ps.dto.request.PlatformSearchDto;
@@ -48,7 +49,7 @@ public class PlatformController {
     }
 
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @RequiresPermission
     @PatchMapping("/platform")
     @Operation(summary = "플랫폼 수정")
     public String editPlatform(@RequestBody @Valid PlatformEditDto editDto) {
@@ -56,7 +57,7 @@ public class PlatformController {
         return "ok";
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @RequiresPermission
     @GetMapping("/platforms")
     @Operation(summary = "플랫폼 단순 목록 조회")
     public PlatformPageDto listPlatform(@RequestParam(name = "page") Integer page,
@@ -64,7 +65,7 @@ public class PlatformController {
         return platformService.getPlatformList(page, status);
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @RequiresPermission
     @GetMapping("/platform/{id}")
     @Operation(summary = "플랫폼 상세 조회")
     public PlatformInfoDto infoPlatform(@PathVariable(name = "id") Long id) {
