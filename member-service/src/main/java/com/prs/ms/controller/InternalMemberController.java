@@ -4,14 +4,16 @@ package com.prs.ms.controller;
 import com.prs.ms.dto.MemberResponseDto;
 import com.prs.ms.service.InternalMemberService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/in")
 @RequiredArgsConstructor
-@Tag(name = "회원 내부 호출 API", description = "다른 서비스 호출을 위한 API")
+@Tag(name = "회원 내부 호출 API")
 public class InternalMemberController {
 
     private final InternalMemberService internalMemberService;

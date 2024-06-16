@@ -45,13 +45,11 @@ public class InternalMemberServiceImpl implements InternalMemberService {
 
     @Override
     public Boolean checkAdmin() {
-        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        for (GrantedAuthority authority : authorities) {
-            if (authority.getAuthority().equals(MemberRole.ROLE_ADMIN.role())) {
-                return true;
-            }
-        }
-        return false;
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        Member member = validateMember(username);
+
+       return member.getRole() == MemberRole.ROLE_ADMIN;
     }
 
 
