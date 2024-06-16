@@ -7,10 +7,8 @@ import com.prs.ms.repository.MemberRepository;
 import com.prs.ms.type.MemberRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -25,13 +23,25 @@ public class InternalMemberServiceImpl implements InternalMemberService {
     private final MemberRepository memberRepository;
 
     @Override
-    public MemberResponseDto getMemberInfo() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public MemberResponseDto findMemberInfo() {
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = validateMember(username);
+
         return new MemberResponseDto(member.getId(), member.getUsername());
 
     }
+
+    @Override
+    public MemberResponseDto findMemberInfoById(Long memberId) {
+        Member member = validateMember(memberId);
+
+        return new MemberResponseDto(member.getId(), member.getUsername());
+    }
+
+
+
+
 
     @Override
     public Boolean checkAdmin() {
@@ -47,7 +57,12 @@ public class InternalMemberServiceImpl implements InternalMemberService {
 
     private Member validateMember(String username) {
         Optional<Member> member = memberRepository.findByUsername(username);
-        return member.orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원에 대한 요청입니다."));
+        return member.orElseThrow(MemberNotFoundException::new);
+    }
+
+    private Member validateMember(Long memberId) {
+        Optional<Member> member = memberRepository.findById(memberId);
+        return member.orElseThrow(MemberNotFoundException::new);
 
     }
 }

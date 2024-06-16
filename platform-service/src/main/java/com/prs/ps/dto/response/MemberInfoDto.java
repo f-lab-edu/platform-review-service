@@ -7,5 +7,4 @@ import lombok.Data;
 public class MemberInfoDto {
     private Long memberId;
     private String name;
-    private Boolean admin;
 }
