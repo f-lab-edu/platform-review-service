@@ -2,6 +2,7 @@ package com.prs.ps.controller;
 
 
 import com.prs.ps.annotation.RequiresPermission;
+import com.prs.ps.domain.Platform;
 import com.prs.ps.dto.request.PlatformApplyDto;
 import com.prs.ps.dto.request.PlatformEditDto;
 import com.prs.ps.dto.request.PlatformSearchDto;
@@ -49,13 +50,16 @@ public class PlatformController {
     }
 
 
+
     @RequiresPermission
     @PatchMapping("/platform")
     @Operation(summary = "플랫폼 수정")
     public String editPlatform(@RequestBody @Valid PlatformEditDto editDto) {
-        platformService.updatePlatform(editDto);
+        platformService.updatePlatform(editDto, editDto.getPlatformId(), Platform.mockObject());
         return "ok";
     }
+
+
 
     @RequiresPermission
     @GetMapping("/platforms")
@@ -69,7 +73,7 @@ public class PlatformController {
     @GetMapping("/platform/{id}")
     @Operation(summary = "플랫폼 상세 조회")
     public PlatformInfoDto infoPlatform(@PathVariable(name = "id") Long id) {
-        return platformService.getPlatformInfo(id);
+        return platformService.getPlatformInfo(id, Platform.mockObject());
     }
 
 

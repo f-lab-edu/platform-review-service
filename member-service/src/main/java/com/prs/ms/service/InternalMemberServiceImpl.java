@@ -46,7 +46,7 @@ public class InternalMemberServiceImpl implements InternalMemberService {
     @Override
     public Boolean checkAdmin() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        
+
         Member member = validateMember(username);
 
        return member.getRole() == MemberRole.ROLE_ADMIN;

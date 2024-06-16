@@ -13,11 +13,11 @@ public interface PlatformService {
 
         Platform addPlatform(PlatformApplyDto applyDto);
 
-        Platform updatePlatform(PlatformEditDto editDto);
+        Platform updatePlatform(PlatformEditDto editDto, Long platformId, Platform mockObject);
 
         PlatformPageDto getPlatformList(Integer page, PlatformStatus status);
 
-        PlatformInfoDto getPlatformInfo(Long id);
+        PlatformInfoDto getPlatformInfo(Long platformId, Platform mockObject);
 
         PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto);
 

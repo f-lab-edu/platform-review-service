@@ -1,6 +1,7 @@
 package com.prs.ps.service;
 
 
+import com.prs.ps.annotation.ValidatePlatform;
 import com.prs.ps.client.MemberServiceClient;
 import com.prs.ps.common.ConstantValues;
 import com.prs.ps.domain.Platform;
@@ -45,16 +46,8 @@ public class PlatformServiceImpl implements PlatformService {
 
     @Override
     @Transactional
-    public Platform updatePlatform(PlatformEditDto editDto) {
-        Long id = editDto.getId();
-        Optional<Platform> platform = platformRepository.findById(id);
-
-        if (platform.isEmpty()) {
-            throw new PlatformNotFoundException();
-        }
-
-
-        return platform.get().changeInfo(editDto.getDescription(), editDto.getStatus());
+    public Platform updatePlatform(PlatformEditDto editDto, @ValidatePlatform Long platformId, Platform platform) {
+        return platform.changeInfo(editDto.getDescription(), editDto.getStatus());
     }
 
 
@@ -83,25 +76,16 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     @Override
-    public PlatformInfoDto getPlatformInfo(Long id) {
-        Optional<Platform> platform = platformRepository.findById(id);
-
-
-        Platform result = platform.orElseThrow(PlatformNotFoundException::new);
-
-
-        MemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(result.getMemberId());
-
-
-
+    public PlatformInfoDto getPlatformInfo(@ValidatePlatform Long platformId, Platform platform) {
+        MemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(platform.getMemberId());
         return PlatformInfoDto.builder()
-                .platformName(result.getName())
-                .description(result.getDescription())
+                .platformName(platform.getName())
+                .description(platform.getDescription())
                 .memberName(memberInfo.getName())
-                .url(result.getUrl())
-                .status(result.getStatus())
-                .modifiedDt(result.getModifiedDt())
-                .createdDt(result.getCreatedDt()).build();
+                .url(platform.getUrl())
+                .status(platform.getStatus())
+                .modifiedDt(platform.getModifiedDt())
+                .createdDt(platform.getCreatedDt()).build();
     }
 
     @Override

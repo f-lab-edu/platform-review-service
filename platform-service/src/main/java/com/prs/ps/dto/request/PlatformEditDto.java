@@ -19,7 +19,7 @@ public class PlatformEditDto {
 
     @NotNull
     @Schema(description = "플랫폼 아이디")
-    private Long id;
+    private Long platformId;
 
     @Length(min = 10, max = 50)
     @Schema(description = "플랫폼 설명")

@@ -71,4 +71,9 @@ public class Platform extends Auditable {
         return this;
     }
 
+
+
+    public static Platform mockObject() {
+        return new Platform();
+    }
 }
