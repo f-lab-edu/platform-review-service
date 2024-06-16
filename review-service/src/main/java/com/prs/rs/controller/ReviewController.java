@@ -3,6 +3,7 @@ package com.prs.rs.controller;
 import com.prs.rs.dto.request.ReviewEditDto;
 import com.prs.rs.dto.request.ReviewListDto;
 import com.prs.rs.dto.request.ReviewWriteDto;
+import com.prs.rs.dto.response.PlatformInfoDto;
 import com.prs.rs.dto.response.ReviewListResultDto;
 import com.prs.rs.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,6 +44,6 @@ public class ReviewController {
     @GetMapping("/review")
     @Operation(summary = "리뷰 목록")
     public ReviewListResultDto listReview(@ModelAttribute @Valid ReviewListDto reviewListDto) {
-        return reviewService.getReviewList(reviewListDto);
+        return reviewService.getReviewList(reviewListDto, reviewListDto.getPlatformId(), new PlatformInfoDto());
     }
 }

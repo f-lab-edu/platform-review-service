@@ -2,10 +2,8 @@ package com.prs.rs.dto.response;
 
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
-@Getter
 public class PlatformInfoDto {
 
     private Long id;

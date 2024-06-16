@@ -1,7 +1,7 @@
 package com.prs.rs.service;
 
 
-import com.prs.rs.aop.Retry;
+import com.prs.rs.aop.ValidatePlatform;
 import com.prs.rs.domain.Review;
 import com.prs.rs.dto.request.ReviewEditDto;
 import com.prs.rs.dto.request.ReviewListDto;
@@ -27,42 +27,64 @@ import static com.prs.rs.common.ConstantValues.PAGE_SIZE;
 @Slf4j
 public class ReviewServiceImpl implements ReviewService {
 
-
-    private final ReviewPersistenceManager reviewPersistenceManager;
     private final ReviewRepository reviewRepository;
 
 
 
 
     @Override
-    @Retry
     public Review addReview(ReviewWriteDto reviewWriteDto) {
-        return reviewPersistenceManager.validateAndWriteReview(reviewWriteDto);
+        // 유효한 멤버인지 검증하는 로직이 들어가야 한다.
+
+        // 플랫폼이 유효한 플랫폼인지 검증하는 로직이 들어가야 한다.
+
+        Long memberId = 2L;
+        Long platformId = 1L;
+
+        // 리뷰 저장
+        Review review = new Review(platformId, memberId, reviewWriteDto.getContent(), reviewWriteDto.getStar());
+        reviewRepository.save(review);
+
+        // 플랫폼 평점 업데이트 로직이 추가되어야 함.
+
+
+        return review;
     }
 
 
 
+
+
     @Override
-    @Retry
     public Review updateReview(ReviewEditDto reviewEditDto) {
-            Review review = reviewPersistenceManager.validateAndUpdateReview(reviewEditDto);
+            // Review review = reviewPersistenceManager.validateAndUpdateReview(reviewEditDto);
             // removeCache(review.getPlatform().getId());
-            return review;
+            return null;
     }
 
     @Override
-    @Retry
     public void deleteReview(Long reviewId) {
-            Long platformId = reviewPersistenceManager.validateAndDeleteReview(reviewId);
+            // Long platformId = reviewPersistenceManager.validateAndDeleteReview(reviewId);
             // removeCache(platformId);
     }
 
+    public PlatformInfoDto validatePlatform(Long platformId) {
+//        Optional<Platform> platform = platformRepository.findById(platformId);
+//
+//        if (platform.isEmpty()) {
+//            throw new PlatformNotFoundException();
+//        }
+//        if (platform.get().getStatus() != PlatformStatus.ACCEPT) {
+//            throw new PlatformAccessDeniedException();
+//        }
+
+
+        return null;
+    }
+
 
     @Override
-    // @Cacheable(value = "reviews", key = "#reviewListDto.id + '#' + #reviewListDto.page + '#' + #reviewListDto.sort", cacheManager = "redisCacheManager")
-    public ReviewListResultDto getReviewList(ReviewListDto reviewListDto) {
-
-        PlatformInfoDto platform = reviewPersistenceManager.validatePlatform(reviewListDto.getPlatformId());
+    public ReviewListResultDto getReviewList(ReviewListDto reviewListDto, @ValidatePlatform Long platformId, PlatformInfoDto platform) {
 
         Pageable pageRequest = PageRequest.of(reviewListDto.getPage(), PAGE_SIZE, sortConverter(reviewListDto.getSort()));
         Page<Review> reviews = reviewRepository.findByIdFromPlatform(platform.getId(), pageRequest);
@@ -95,16 +117,6 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return result;
     }
-
-
-    /*
-    * 플랫폼 ID에 해당하는 리뷰 캐시 삭제
-     */
-    //    private void removeCache(Long platformId) {
-    //        String pattern = REVIEW_CACHE + "::" + platformId;
-    //        cacheControlManager.evictCacheByPattern(pattern);
-    //    }
-
 
 
 
