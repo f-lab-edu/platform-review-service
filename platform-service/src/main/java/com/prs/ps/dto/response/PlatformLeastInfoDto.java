@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class PlatformLeastInfoDto {
 
-    private Long id;
+    private Long platformId;
     private String name;
     private String url;
     private String description;

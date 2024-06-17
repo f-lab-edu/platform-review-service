@@ -19,7 +19,7 @@ public class InternalPlatformServiceImpl implements InternalPlatformService{
         }
 
         return PlatformLeastInfoDto.builder()
-                .id(platform.getId())
+                .platformId(platform.getId())
                 .url(platform.getUrl())
                 .name(platform.getName())
                 .star(platform.getStar())
