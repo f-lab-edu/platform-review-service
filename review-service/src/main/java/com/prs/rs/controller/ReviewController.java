@@ -49,7 +49,7 @@ public class ReviewController {
     @DeleteMapping("/review")
     @Operation(summary = "리뷰 삭제")
     public String removeReview(@RequestParam(name = "id") Long id) {
-        reviewService.deleteReview(id);
+        reviewService.deleteReview(id, Review.mockObject(), new MemberInfoDto());
         return "ok";
     }
 

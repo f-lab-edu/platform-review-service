@@ -83,9 +83,20 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public void deleteReview(Long reviewId) {
-            // Long platformId = reviewPersistenceManager.validateAndDeleteReview(reviewId);
-            // removeCache(platformId);
+    public void deleteReview(@ValidateReview Long reviewId, Review review,
+                             @ValidateMember MemberInfoDto memberInfoDto) {
+        try {
+            checkAuthority(memberInfoDto, review);
+        } catch (ReviewAccessDeniedException e) {
+            // 어드민인지 체크
+            if (!memberServiceClient.checkAdmin()) {
+                throw new ReviewAccessDeniedException(e.getMessage());
+            }
+        }
+
+        reviewRepository.delete(review);
+
+        updatePlatform(review.getPlatformId());
     }
 
 
