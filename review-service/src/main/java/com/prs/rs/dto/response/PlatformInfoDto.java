@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class PlatformInfoDto {
 
-    private Long id;
+    private Long platformId;
     private String name;
     private String url;
     private String description;

@@ -1,5 +1,4 @@
-package com.prs.rs.aop;
-
+package com.prs.rs.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidatePlatform {
+public @interface ValidateMember {
 }

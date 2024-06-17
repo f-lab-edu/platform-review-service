@@ -3,6 +3,7 @@ package com.prs.rs.controller;
 import com.prs.rs.dto.request.ReviewEditDto;
 import com.prs.rs.dto.request.ReviewListDto;
 import com.prs.rs.dto.request.ReviewWriteDto;
+import com.prs.rs.dto.response.MemberInfoDto;
 import com.prs.rs.dto.response.PlatformInfoDto;
 import com.prs.rs.dto.response.ReviewListResultDto;
 import com.prs.rs.service.ReviewService;
@@ -23,7 +24,7 @@ public class ReviewController {
     @PostMapping("/review")
     @Operation(summary = "리뷰 작성")
     public String writeReview(@RequestBody @Valid ReviewWriteDto reviewWriteDto) {
-        reviewService.addReview(reviewWriteDto);
+        reviewService.addReview(reviewWriteDto.getPlatformId(), new PlatformInfoDto(), new MemberInfoDto(), reviewWriteDto);
         return "ok";
     }
 

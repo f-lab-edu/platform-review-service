@@ -1,13 +1,17 @@
 package com.prs.rs.service;
 
 
-import com.prs.rs.aop.ValidatePlatform;
+import com.prs.rs.annotation.ValidateMember;
+import com.prs.rs.annotation.ValidatePlatform;
 import com.prs.rs.domain.Review;
+import com.prs.rs.dto.request.PlatformRefreshDto;
 import com.prs.rs.dto.request.ReviewEditDto;
 import com.prs.rs.dto.request.ReviewListDto;
 import com.prs.rs.dto.request.ReviewWriteDto;
+import com.prs.rs.dto.response.MemberInfoDto;
 import com.prs.rs.dto.response.PlatformInfoDto;
 import com.prs.rs.dto.response.ReviewListResultDto;
+import com.prs.rs.event.KafkaProducer;
 import com.prs.rs.repository.ReviewRepository;
 import com.prs.rs.type.SortType;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
-import static com.prs.rs.common.ConstantValues.PAGE_SIZE;
+import static com.prs.rs.common.ConstantValues.*;
 
 
 @Service
@@ -28,30 +32,29 @@ import static com.prs.rs.common.ConstantValues.PAGE_SIZE;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
-
+    private final KafkaProducer kafkaProducer;
 
 
 
     @Override
-    public Review addReview(ReviewWriteDto reviewWriteDto) {
-        // 유효한 멤버인지 검증하는 로직이 들어가야 한다.
-
-        // 플랫폼이 유효한 플랫폼인지 검증하는 로직이 들어가야 한다.
-
-        Long memberId = 2L;
-        Long platformId = 1L;
+    public Review addReview(@ValidatePlatform Long platformId, PlatformInfoDto platformInfoDto,
+                            @ValidateMember MemberInfoDto memberInfoDto,
+                            ReviewWriteDto reviewWriteDto) {
 
         // 리뷰 저장
-        Review review = new Review(platformId, memberId, reviewWriteDto.getContent(), reviewWriteDto.getStar());
+        Review review = new Review(platformInfoDto.getPlatformId(), memberInfoDto.getMemberId(), reviewWriteDto.getContent(), reviewWriteDto.getStar());
         reviewRepository.save(review);
 
-        // 플랫폼 평점 업데이트 로직이 추가되어야 함.
-
+        // 플랫폼 평점 업데이트
+        updatePlatform(review.getPlatformId());
 
         return review;
     }
 
-
+    private void updatePlatform(Long platformId) {
+        PlatformRefreshDto platformRefreshDto = reviewRepository.findByIdAndFetchInfo(platformId);
+        kafkaProducer.platformRefresh(PLATFORM_REFRESH_TOPIC, platformRefreshDto);
+    }
 
 
 
@@ -87,7 +90,7 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewListResultDto getReviewList(ReviewListDto reviewListDto, @ValidatePlatform Long platformId, PlatformInfoDto platform) {
 
         Pageable pageRequest = PageRequest.of(reviewListDto.getPage(), PAGE_SIZE, sortConverter(reviewListDto.getSort()));
-        Page<Review> reviews = reviewRepository.findByIdFromPlatform(platform.getId(), pageRequest);
+        Page<Review> reviews = reviewRepository.findByIdFromPlatform(platform.getPlatformId(), pageRequest);
 
 
         return createReviewResultDto(platform, reviews);
@@ -95,7 +98,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private ReviewListResultDto createReviewResultDto(PlatformInfoDto platform, Page<Review> reviews) {
         ReviewListResultDto result = ReviewListResultDto.builder()
-                .platformNo(platform.getId())
+                .platformNo(platform.getPlatformId())
                 .platformName(platform.getName())
                 .platformUrl(platform.getUrl())
                 .platformDescription(platform.getDescription())
