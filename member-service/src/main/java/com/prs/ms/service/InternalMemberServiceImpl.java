@@ -7,12 +7,13 @@ import com.prs.ms.repository.MemberRepository;
 import com.prs.ms.type.MemberRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,7 +22,12 @@ public class InternalMemberServiceImpl implements InternalMemberService {
 
 
     private final MemberRepository memberRepository;
-
+    
+    
+    
+    /*
+    * 요청하는 멤버의 정보 반환
+    * */
     @Override
     public MemberResponseDto findMemberInfo() {
 
@@ -29,19 +35,42 @@ public class InternalMemberServiceImpl implements InternalMemberService {
         Member member = validateMember(username);
 
         return new MemberResponseDto(member.getId(), member.getUsername());
-
     }
-
+    
+    
+    
+    /*
+     * 특정 멤버의 정보 반환
+     * */
     @Override
     public MemberResponseDto findMemberInfoById(Long memberId) {
         Member member = validateMember(memberId);
 
         return new MemberResponseDto(member.getId(), member.getUsername());
     }
+    
+    
+    
+    
+    /*
+     * 다수의 멤버 정보 반환
+     */
+    @Override
+    public HashMap<Long, MemberResponseDto> findMembers(List<Long> memberIdList) {
+        List<Member> members = memberRepository.findByIdIn(memberIdList);
 
+        // List<Member> -> HashMap<Long, MemberResponseDto>
+        return (HashMap<Long, MemberResponseDto>) members.stream().
+                collect(Collectors.toMap(Member::getId, m -> new MemberResponseDto(m.getId(), m.getUsername())));
+    }
 
-
-
+    
+    
+    
+    
+    
+    
+    
 
     @Override
     public Boolean checkAdmin() {
