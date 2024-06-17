@@ -13,7 +13,7 @@ public interface ReviewService {
 
     Review addReview(Long platformId, PlatformInfoDto platformInfoDto, MemberInfoDto memberInfoDto, ReviewWriteDto reviewWriteDto);
 
-    Review updateReview(ReviewEditDto reviewEditDto);
+    Review updateReview(Long reviewId, Review review, MemberInfoDto memberInfoDto, ReviewEditDto reviewEditDto);
 
     void deleteReview(Long id);
 

@@ -1,10 +1,8 @@
 package com.prs.rs.service;
 
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prs.rs.annotation.ValidateMember;
 import com.prs.rs.annotation.ValidatePlatform;
+import com.prs.rs.annotation.ValidateReview;
 import com.prs.rs.client.MemberServiceClient;
 import com.prs.rs.domain.Review;
 import com.prs.rs.dto.request.PlatformRefreshDto;
@@ -15,6 +13,7 @@ import com.prs.rs.dto.response.MemberInfoDto;
 import com.prs.rs.dto.response.PlatformInfoDto;
 import com.prs.rs.dto.response.ReviewListResultDto;
 import com.prs.rs.event.KafkaProducer;
+import com.prs.rs.exception.ReviewAccessDeniedException;
 import com.prs.rs.repository.ReviewRepository;
 import com.prs.rs.type.SortType;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.prs.rs.common.ConstantValues.*;
 
@@ -62,30 +60,32 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public Review updateReview(ReviewEditDto reviewEditDto) {
-            // Review review = reviewPersistenceManager.validateAndUpdateReview(reviewEditDto);
-            // removeCache(review.getPlatform().getId());
-            return null;
+    public Review updateReview(@ValidateReview Long reviewId, Review review,
+                               @ValidateMember MemberInfoDto memberInfoDto,
+                               ReviewEditDto reviewEditDto) {
+
+        checkAuthority(memberInfoDto, review);
+
+
+        Byte beforeStar = review.getStar();
+
+        // 리뷰 수정
+        review.changeInfo(reviewEditDto.getContent(), reviewEditDto.getStar());
+        reviewRepository.save(review);
+
+        // 리뷰에서 별점이 수정되었다면 플랫폼 평점 업데이트 진행
+        if(!beforeStar.equals(review.getStar())) {
+           updatePlatform(review.getPlatformId());
+        }
+        return review;
     }
+
+
 
     @Override
     public void deleteReview(Long reviewId) {
             // Long platformId = reviewPersistenceManager.validateAndDeleteReview(reviewId);
             // removeCache(platformId);
-    }
-
-    public PlatformInfoDto validatePlatform(Long platformId) {
-//        Optional<Platform> platform = platformRepository.findById(platformId);
-//
-//        if (platform.isEmpty()) {
-//            throw new PlatformNotFoundException();
-//        }
-//        if (platform.get().getStatus() != PlatformStatus.ACCEPT) {
-//            throw new PlatformAccessDeniedException();
-//        }
-
-
-        return null;
     }
 
 
@@ -158,6 +158,13 @@ public class ReviewServiceImpl implements ReviewService {
             case STAR_DESC ->  { return Sort.by(Sort.Direction.DESC, "star"); }
             case DATE_DESC -> { return Sort.by(Sort.Direction.DESC, "createdDt"); }
             default ->  { return Sort.by(Sort.Direction.ASC, "createdDt"); }
+        }
+    }
+
+
+    private void checkAuthority(MemberInfoDto memberInfoDto, Review review) {
+        if (!memberInfoDto.getMemberId().equals(review.getMemberId())) {
+            throw new ReviewAccessDeniedException();
         }
     }
 
