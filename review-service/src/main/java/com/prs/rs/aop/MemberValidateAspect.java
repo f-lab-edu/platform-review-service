@@ -24,7 +24,7 @@ public class MemberValidateAspect {
     private final MemberServiceClient memberServiceClient;
 
     @Around("execution(* *(.., @com.prs.rs.annotation.ValidateMember (*), ..))")
-    public Object retry(ProceedingJoinPoint joinPoint) throws Throwable{
+    public Object validate(ProceedingJoinPoint joinPoint) throws Throwable{
 
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();

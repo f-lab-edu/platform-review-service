@@ -24,7 +24,7 @@ public class PlatformValidateAspect {
     private final PlatformServiceClient platformServiceClient;
 
     @Around("execution(* *(.., @com.prs.rs.annotation.ValidatePlatform (*), ..))")
-    public Object retry(ProceedingJoinPoint joinPoint) throws Throwable{
+    public Object validate(ProceedingJoinPoint joinPoint) throws Throwable{
 
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
