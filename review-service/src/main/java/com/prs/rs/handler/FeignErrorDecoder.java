@@ -1,9 +1,8 @@
-package com.prs.ps.handler;
+package com.prs.rs.handler;
 
-import com.prs.ps.exception.PlatformCreationException;
+import com.prs.rs.exception.ReviewAccessDeniedException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -17,8 +16,8 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
 
     {
-        exceptionMap500.put("Member", PlatformCreationException.class);
-
+        exceptionMap500.put("Member", ReviewAccessDeniedException.class);
+        exceptionMap500.put("Platform", ReviewAccessDeniedException.class);
         errorCodeMap.put(500, exceptionMap500);
     }
 
