@@ -1,8 +1,11 @@
 package com.prs.rs.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prs.rs.annotation.ValidateMember;
 import com.prs.rs.annotation.ValidatePlatform;
+import com.prs.rs.client.MemberServiceClient;
 import com.prs.rs.domain.Review;
 import com.prs.rs.dto.request.PlatformRefreshDto;
 import com.prs.rs.dto.request.ReviewEditDto;
@@ -22,6 +25,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.prs.rs.common.ConstantValues.*;
 
@@ -33,6 +39,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final KafkaProducer kafkaProducer;
+    private final MemberServiceClient memberServiceClient;
+
 
 
 
@@ -49,11 +57,6 @@ public class ReviewServiceImpl implements ReviewService {
         updatePlatform(review.getPlatformId());
 
         return review;
-    }
-
-    private void updatePlatform(Long platformId) {
-        PlatformRefreshDto platformRefreshDto = reviewRepository.findByIdAndFetchInfo(platformId);
-        kafkaProducer.platformRefresh(PLATFORM_REFRESH_TOPIC, platformRefreshDto);
     }
 
 
@@ -108,10 +111,16 @@ public class ReviewServiceImpl implements ReviewService {
                 .reviewList(new ArrayList<>())
                 .totalPage(reviews.getTotalPages()).build();
 
+
+        HashMap<Long, MemberInfoDto> memberNameList = getReviewMemberList(reviews.getContent());
+
         for (Review review : reviews.getContent()) {
+
+            MemberInfoDto memberInfoDto = memberNameList.get(review.getMemberId());
+
             ReviewListResultDto.Dto dto = ReviewListResultDto.Dto.builder()
                     .reviewNumber(review.getId())
-                    .memberName("testuser") // 유저 이름 넣어줘야함.
+                    .memberName(memberInfoDto.getName())
                     .content(review.getContent())
                     .star(review.getStar())
                     .createdDt(review.getCreatedDt())
@@ -119,6 +128,23 @@ public class ReviewServiceImpl implements ReviewService {
             result.getReviewList().add(dto);
         }
         return result;
+    }
+
+
+    /*
+    * 리뷰를 작성한 멤버의 이름을 가져온다.
+    * */
+    private HashMap<Long, MemberInfoDto> getReviewMemberList(List<Review> reviews) {
+
+        List<Long> memberIdList = reviews.stream().map(Review::getMemberId).toList();
+
+        return memberServiceClient.getMembers(memberIdList);
+    }
+
+
+    private void updatePlatform(Long platformId) {
+        PlatformRefreshDto platformRefreshDto = reviewRepository.findByIdAndFetchInfo(platformId);
+        kafkaProducer.platformRefresh(PLATFORM_REFRESH_TOPIC, platformRefreshDto);
     }
 
 
