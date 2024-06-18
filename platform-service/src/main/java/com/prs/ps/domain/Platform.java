@@ -72,7 +72,7 @@ public class Platform extends Auditable {
     }
 
 
-    public static Platform mockObject() {
+    public static Platform getEmpty() {
         return new Platform();
     }
 }

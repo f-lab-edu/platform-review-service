@@ -33,7 +33,7 @@ public class Review extends Auditable {
     private Long platformId;
 
 
-    public static Review mockObject() {
+    public static Review getEmpty() {
         return new Review();
     }
 

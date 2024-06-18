@@ -55,7 +55,7 @@ public class PlatformController {
     @PatchMapping("/platform")
     @Operation(summary = "플랫폼 수정")
     public String editPlatform(@RequestBody @Valid PlatformEditDto editDto) {
-        platformService.updatePlatform(editDto, editDto.getPlatformId(), Platform.mockObject());
+        platformService.updatePlatform(editDto, editDto.getPlatformId(), Platform.getEmpty());
         return "ok";
     }
 
@@ -72,7 +72,7 @@ public class PlatformController {
     @GetMapping("/platform/{id}")
     @Operation(summary = "플랫폼 상세 조회")
     public PlatformInfoDto infoPlatform(@PathVariable(name = "id") Long id) {
-        return platformService.getPlatformInfo(id, Platform.mockObject());
+        return platformService.getPlatformInfo(id, Platform.getEmpty());
     }
 
 

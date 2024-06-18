@@ -42,7 +42,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 수정")
     public String editReview(@RequestBody @Valid ReviewEditDto reviewEditDto) {
 
-        reviewService.updateReview(reviewEditDto.getReviewId(), Review.mockObject(),
+        reviewService.updateReview(reviewEditDto.getReviewId(), Review.getEmpty(),
             new MemberInfoDto(), reviewEditDto);
         return "ok";
     }
@@ -50,7 +50,7 @@ public class ReviewController {
     @DeleteMapping("/review")
     @Operation(summary = "리뷰 삭제")
     public String removeReview(@RequestParam(name = "id") Long id) {
-        reviewService.deleteReview(id, Review.mockObject(), new MemberInfoDto());
+        reviewService.deleteReview(id, Review.getEmpty(), new MemberInfoDto());
         return "ok";
     }
 

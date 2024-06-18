@@ -19,7 +19,7 @@ public class InternalPlatformController {
 
     @GetMapping("/platforms/{platformId}")
     public PlatformLeastInfoDto platformInfo(@PathVariable("platformId") Long platformId) {
-        return internalPlatformService.findPlatformInfoById(platformId, Platform.mockObject());
+        return internalPlatformService.findPlatformInfoById(platformId, Platform.getEmpty());
     }
 
 }
