@@ -21,7 +21,7 @@ import java.util.Optional;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ValidatePlatformAspect {
+public class PlatformValidateAspect {
 
     private final PlatformRepository platformRepository;
 
