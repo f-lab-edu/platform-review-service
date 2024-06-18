@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.prs.rs.common.ConstantValues.*;
 
@@ -39,6 +40,14 @@ public class ReviewServiceImpl implements ReviewService {
     private final KafkaProducer kafkaProducer;
     private final MemberServiceClient memberServiceClient;
 
+    private final Map<SortType, Sort> sortMap = new HashMap<>();
+
+    {
+        sortMap.put(SortType.STAR_ASC, Sort.by(Sort.Direction.ASC, "star"));
+        sortMap.put(SortType.STAR_DESC, Sort.by(Sort.Direction.DESC, "star"));
+        sortMap.put(SortType.DATE_ASC, Sort.by(Sort.Direction.ASC, "createdDt"));
+        sortMap.put(SortType.DATE_DESC, Sort.by(Sort.Direction.DESC, "createdDt"));
+    }
 
 
 
@@ -83,16 +92,27 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public void deleteReview(Long reviewId) {
-            // Long platformId = reviewPersistenceManager.validateAndDeleteReview(reviewId);
-            // removeCache(platformId);
+    public void deleteReview(@ValidateReview Long reviewId, Review review,
+                             @ValidateMember MemberInfoDto memberInfoDto) {
+        try {
+            checkAuthority(memberInfoDto, review);
+        } catch (ReviewAccessDeniedException e) {
+            // 어드민인지 체크
+            if (!memberServiceClient.checkAdmin()) {
+                throw new ReviewAccessDeniedException(e.getMessage());
+            }
+        }
+
+        reviewRepository.delete(review);
+
+        updatePlatform(review.getPlatformId());
     }
 
 
     @Override
     public ReviewListResultDto getReviewList(ReviewListDto reviewListDto, @ValidatePlatform Long platformId, PlatformInfoDto platform) {
 
-        Pageable pageRequest = PageRequest.of(reviewListDto.getPage(), PAGE_SIZE, sortConverter(reviewListDto.getSort()));
+        Pageable pageRequest = PageRequest.of(reviewListDto.getPage(), PAGE_SIZE, sortMap.get(reviewListDto.getSort()));
         Page<Review> reviews = reviewRepository.findByIdFromPlatform(platform.getPlatformId(), pageRequest);
 
 
@@ -145,20 +165,6 @@ public class ReviewServiceImpl implements ReviewService {
     private void updatePlatform(Long platformId) {
         PlatformRefreshDto platformRefreshDto = reviewRepository.findByIdAndFetchInfo(platformId);
         kafkaProducer.platformRefresh(PLATFORM_REFRESH_TOPIC, platformRefreshDto);
-    }
-
-
-
-    /*
-    * SortType -> Sort
-    * */
-    private Sort sortConverter(SortType sort) {
-        switch (sort) {
-            case STAR_ASC ->  { return Sort.by(Sort.Direction.ASC, "star"); }
-            case STAR_DESC ->  { return Sort.by(Sort.Direction.DESC, "star"); }
-            case DATE_DESC -> { return Sort.by(Sort.Direction.DESC, "createdDt"); }
-            default ->  { return Sort.by(Sort.Direction.ASC, "createdDt"); }
-        }
     }
 
 
