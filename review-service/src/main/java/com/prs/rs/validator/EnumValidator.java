@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 public class EnumValidator implements ConstraintValidator<ValidEnum, Enum> {
+
     private ValidEnum annotation;
 
     @Override

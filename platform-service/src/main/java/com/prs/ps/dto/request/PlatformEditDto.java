@@ -1,8 +1,8 @@
 package com.prs.ps.dto.request;
 
 
-import com.prs.ps.validator.ValidEnum;
 import com.prs.ps.type.PlatformStatus;
+import com.prs.ps.validator.ValidEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

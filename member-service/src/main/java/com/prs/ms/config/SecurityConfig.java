@@ -28,40 +28,38 @@ public class SecurityConfig {
 
         http.userDetailsService(customUserDetailsService)
 
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
 
-                // 간단한 api 로그인 구현을 위해 csrf 비활성화
-                .csrf(csrf -> csrf.disable())
+            // 간단한 api 로그인 구현을 위해 csrf 비활성화
+            .csrf(csrf -> csrf.disable())
 
-                .formLogin(form -> form.loginProcessingUrl("/api/login")
-                        .defaultSuccessUrl("/login/success").failureUrl("/login/failed"))
+            .formLogin(form -> form.loginProcessingUrl("/api/login")
+                .defaultSuccessUrl("/login/success").failureUrl("/login/failed"))
 
-                .logout(out -> out.logoutUrl("/api/logout")
-                        .logoutSuccessHandler(((request, response, authentication) -> {
-                            response.setContentType(UTF8_CONTENT_TYPE);
-                            response.setCharacterEncoding("UTF-8");
-                            response.getWriter().write("로그아웃 되었습니다.");
-                        })))
-                .sessionManagement(session -> session.maximumSessions(1)
-                        .maxSessionsPreventsLogin(false)) // 동시 접속 비활성화, 같은 아이디로 접속 시 기존 사용자 세션 만료
+            .logout(out -> out.logoutUrl("/api/logout")
+                .logoutSuccessHandler(((request, response, authentication) -> {
+                    response.setContentType(UTF8_CONTENT_TYPE);
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("로그아웃 되었습니다.");
+                })))
+            .sessionManagement(session -> session.maximumSessions(1)
+                .maxSessionsPreventsLogin(false)) // 동시 접속 비활성화, 같은 아이디로 접속 시 기존 사용자 세션 만료
 
+            // 로그인되지 않은 사용자가 로그인이 필요한 자원에 접근 시 예외 발생
+            .exceptionHandling(e ->
+                e.authenticationEntryPoint(
+                    (request, response, authException) -> {
+                        response.setContentType(UTF8_CONTENT_TYPE);
+                        response.setCharacterEncoding("UTF-8");
+                        response.getWriter().write("인증이 필요한 요청입니다.");
+                    }
+                ).accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setContentType(UTF8_CONTENT_TYPE);
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("접근 권한이 부족합니다.");
+                })
 
-                // 로그인되지 않은 사용자가 로그인이 필요한 자원에 접근 시 예외 발생
-                .exceptionHandling(e ->
-                        e.authenticationEntryPoint(
-                                (request, response, authException) -> {
-                                    response.setContentType(UTF8_CONTENT_TYPE);
-                                    response.setCharacterEncoding("UTF-8");
-                                    response.getWriter().write("인증이 필요한 요청입니다.");
-                                }
-                        ).accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setContentType(UTF8_CONTENT_TYPE);
-                            response.setCharacterEncoding("UTF-8");
-                            response.getWriter().write("접근 권한이 부족합니다.");
-                        })
-
-
-                )
+            )
         ;
 
         return http.build();

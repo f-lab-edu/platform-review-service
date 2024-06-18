@@ -2,10 +2,9 @@ package com.prs.ms.repository;
 
 
 import com.prs.ms.domain.Member;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 

@@ -11,14 +11,14 @@ import com.prs.ps.type.PlatformStatus;
 
 public interface PlatformService {
 
-        Platform addPlatform(PlatformApplyDto applyDto);
+    Platform addPlatform(PlatformApplyDto applyDto);
 
-        Platform updatePlatform(PlatformEditDto editDto, Long platformId, Platform mockObject);
+    Platform updatePlatform(PlatformEditDto editDto, Long platformId, Platform mockObject);
 
-        PlatformPageDto getPlatformList(Integer page, PlatformStatus status);
+    PlatformPageDto getPlatformList(Integer page, PlatformStatus status);
 
-        PlatformInfoDto getPlatformInfo(Long platformId, Platform mockObject);
+    PlatformInfoDto getPlatformInfo(Long platformId, Platform mockObject);
 
-        PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto);
+    PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto);
 
 }

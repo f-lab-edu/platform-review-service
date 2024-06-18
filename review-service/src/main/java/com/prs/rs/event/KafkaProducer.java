@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class KafkaProducer {
+
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void platformRefresh(String topic, PlatformRefreshDto platformRefreshDto) {
@@ -19,7 +20,7 @@ public class KafkaProducer {
         String jsonInString = "";
         try {
             jsonInString = mapper.writeValueAsString(platformRefreshDto);
-        } catch(JsonProcessingException ex) {
+        } catch (JsonProcessingException ex) {
             ex.printStackTrace();
         }
         kafkaTemplate.send(topic, jsonInString);

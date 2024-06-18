@@ -1,6 +1,6 @@
 package com.prs.ps.exception;
 
-public class PlatformAccessDeniedException extends RuntimeException{
+public class PlatformAccessDeniedException extends RuntimeException {
 
     public PlatformAccessDeniedException() {
         super("플랫폼에 대한 접근이 거부되었습니다.");

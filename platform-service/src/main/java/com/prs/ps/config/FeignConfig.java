@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class FeignConfig {
+
     @Bean
     public RequestInterceptor feignCookieInterceptor() {
         return new FeignCookieInterceptor();

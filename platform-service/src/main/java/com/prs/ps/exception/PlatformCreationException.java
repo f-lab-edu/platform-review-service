@@ -1,6 +1,6 @@
 package com.prs.ps.exception;
 
-public class PlatformCreationException extends RuntimeException{
+public class PlatformCreationException extends RuntimeException {
 
 
     public PlatformCreationException() {

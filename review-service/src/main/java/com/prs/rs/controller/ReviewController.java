@@ -12,15 +12,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
@@ -29,11 +29,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class ReviewController {
 
     private final ReviewService reviewService;
-    
+
     @PostMapping("/review")
     @Operation(summary = "리뷰 작성")
     public String writeReview(@RequestBody @Valid ReviewWriteDto reviewWriteDto) {
-        reviewService.addReview(reviewWriteDto.getPlatformId(), new PlatformInfoDto(), new MemberInfoDto(), reviewWriteDto);
+        reviewService.addReview(reviewWriteDto.getPlatformId(), new PlatformInfoDto(),
+            new MemberInfoDto(), reviewWriteDto);
         return "ok";
     }
 
@@ -41,8 +42,8 @@ public class ReviewController {
     @Operation(summary = "리뷰 수정")
     public String editReview(@RequestBody @Valid ReviewEditDto reviewEditDto) {
 
-
-        reviewService.updateReview(reviewEditDto.getReviewId(), Review.mockObject(), new MemberInfoDto(),reviewEditDto);
+        reviewService.updateReview(reviewEditDto.getReviewId(), Review.mockObject(),
+            new MemberInfoDto(), reviewEditDto);
         return "ok";
     }
 
@@ -56,6 +57,7 @@ public class ReviewController {
     @GetMapping("/review")
     @Operation(summary = "리뷰 목록")
     public ReviewListResultDto listReview(@ModelAttribute @Valid ReviewListDto reviewListDto) {
-        return reviewService.getReviewList(reviewListDto, reviewListDto.getPlatformId(), new PlatformInfoDto());
+        return reviewService.getReviewList(reviewListDto, reviewListDto.getPlatformId(),
+            new PlatformInfoDto());
     }
 }

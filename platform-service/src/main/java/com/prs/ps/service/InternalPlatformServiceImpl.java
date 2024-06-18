@@ -9,20 +9,21 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class InternalPlatformServiceImpl implements InternalPlatformService{
+public class InternalPlatformServiceImpl implements InternalPlatformService {
 
     @Override
-    public PlatformLeastInfoDto findPlatformInfoById(@ValidatePlatform Long platformId, Platform platform) {
+    public PlatformLeastInfoDto findPlatformInfoById(@ValidatePlatform Long platformId,
+        Platform platform) {
 
         if (!(platform.getStatus() == PlatformStatus.ACCEPT)) {
             throw new PlatformAccessDeniedException();
         }
 
         return PlatformLeastInfoDto.builder()
-                .platformId(platform.getId())
-                .url(platform.getUrl())
-                .name(platform.getName())
-                .star(platform.getStar())
-                .description(platform.getDescription()).build();
+            .platformId(platform.getId())
+            .url(platform.getUrl())
+            .name(platform.getName())
+            .star(platform.getStar())
+            .description(platform.getDescription()).build();
     }
 }

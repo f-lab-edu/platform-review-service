@@ -3,6 +3,8 @@ package com.prs.rs.aop;
 import com.prs.rs.annotation.ValidateMember;
 import com.prs.rs.client.MemberServiceClient;
 import com.prs.rs.dto.response.MemberInfoDto;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -10,9 +12,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 
 @Aspect
@@ -24,8 +23,7 @@ public class MemberValidateAspect {
     private final MemberServiceClient memberServiceClient;
 
     @Around("execution(* *(.., @com.prs.rs.annotation.ValidateMember (*), ..))")
-    public Object validate(ProceedingJoinPoint joinPoint) throws Throwable{
-
+    public Object validate(ProceedingJoinPoint joinPoint) throws Throwable {
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
@@ -33,11 +31,12 @@ public class MemberValidateAspect {
 
         Object[] parameters = joinPoint.getArgs(); // 파라미터
 
-
         // 파라미터 배열을 탐색하여 @ValidatePlatform 어노테이션이 있는 PlatformInfoDto 타입의 파라미터를 찾아서 검증
-        Loop : for (int i = 0; i < parameterAnnotations.length; i++) {
+        Loop:
+        for (int i = 0; i < parameterAnnotations.length; i++) {
             for (Annotation annotation : parameterAnnotations[i]) {
-                if (annotation instanceof ValidateMember && parameters[i] instanceof MemberInfoDto) {
+                if (annotation instanceof ValidateMember
+                    && parameters[i] instanceof MemberInfoDto) {
 
                     MemberInfoDto memberInfo = memberServiceClient.getMemberInfo();
                     parameters[i] = memberInfo;

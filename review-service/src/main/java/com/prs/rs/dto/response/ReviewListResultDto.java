@@ -5,13 +5,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,13 +31,12 @@ public class ReviewListResultDto {
     List<Dto> reviewList;
 
 
-
-
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
     @Builder
     public static class Dto {
+
         private Long reviewNumber;
         private String memberName;
         private String content;

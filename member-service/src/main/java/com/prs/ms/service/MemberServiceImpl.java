@@ -1,16 +1,14 @@
 package com.prs.ms.service;
 
+import com.prs.ms.domain.Member;
 import com.prs.ms.dto.MemberRegisterDto;
 import com.prs.ms.exception.MemberSignUpException;
 import com.prs.ms.repository.MemberRepository;
 import com.prs.ms.type.MemberRole;
-import com.prs.ms.domain.Member;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -25,7 +23,6 @@ public class MemberServiceImpl implements MemberService {
 
         // 유저 이름 중복여부 체크
         duplicate(memberRegisterDto.getUsername());
-
 
         // 패스워드 암호화 및 유저 엔티티 생성
         String password = passwordEncoder.encode(memberRegisterDto.getPassword());

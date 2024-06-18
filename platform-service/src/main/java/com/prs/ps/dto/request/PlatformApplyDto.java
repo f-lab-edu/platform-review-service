@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.Length;
 @Schema(description = "플랫폼 등록 신청 DTO")
 public class PlatformApplyDto {
 
-    @Length(min=1, max = 20)
+    @Length(min = 1, max = 20)
     @Schema(description = "플랫폼 이름", defaultValue = "네이버")
     private String name;
 

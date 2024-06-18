@@ -5,15 +5,14 @@ import com.prs.ms.dto.MemberResponseDto;
 import com.prs.ms.exception.MemberNotFoundException;
 import com.prs.ms.repository.MemberRepository;
 import com.prs.ms.type.MemberRole;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -22,12 +21,11 @@ public class InternalMemberServiceImpl implements InternalMemberService {
 
 
     private final MemberRepository memberRepository;
-    
-    
-    
+
+
     /*
-    * 요청하는 멤버의 정보 반환
-    * */
+     * 요청하는 멤버의 정보 반환
+     * */
     @Override
     public MemberResponseDto findMemberInfo() {
 
@@ -36,9 +34,8 @@ public class InternalMemberServiceImpl implements InternalMemberService {
 
         return new MemberResponseDto(member.getId(), member.getUsername());
     }
-    
-    
-    
+
+
     /*
      * 특정 멤버의 정보 반환
      * */
@@ -48,10 +45,8 @@ public class InternalMemberServiceImpl implements InternalMemberService {
 
         return new MemberResponseDto(member.getId(), member.getUsername());
     }
-    
-    
-    
-    
+
+
     /*
      * 다수의 멤버 정보 반환
      */
@@ -61,16 +56,10 @@ public class InternalMemberServiceImpl implements InternalMemberService {
 
         // List<Member> -> HashMap<Long, MemberResponseDto>
         return (HashMap<Long, MemberResponseDto>) members.stream().
-                collect(Collectors.toMap(Member::getId, m -> new MemberResponseDto(m.getId(), m.getUsername())));
+            collect(Collectors.toMap(Member::getId,
+                m -> new MemberResponseDto(m.getId(), m.getUsername())));
     }
 
-    
-    
-    
-    
-    
-    
-    
 
     @Override
     public Boolean checkAdmin() {
@@ -78,7 +67,7 @@ public class InternalMemberServiceImpl implements InternalMemberService {
 
         Member member = validateMember(username);
 
-       return member.getRole() == MemberRole.ROLE_ADMIN;
+        return member.getRole() == MemberRole.ROLE_ADMIN;
     }
 
 

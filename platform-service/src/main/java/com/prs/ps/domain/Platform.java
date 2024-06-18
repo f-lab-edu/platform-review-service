@@ -1,13 +1,13 @@
 package com.prs.ps.domain;
 
 import com.prs.ps.type.PlatformStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Column;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -70,7 +70,6 @@ public class Platform extends Auditable {
         this.star = (reviewCount == 0L) ? (byte) 0 : (byte) (totalStar / reviewCount);
         return this;
     }
-
 
 
     public static Platform mockObject() {

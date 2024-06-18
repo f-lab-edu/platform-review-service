@@ -1,5 +1,11 @@
 package com.prs.ps.handler;
 
+import com.prs.ps.exception.PlatformAccessDeniedException;
+import com.prs.ps.exception.PlatformCreationException;
+import com.prs.ps.exception.PlatformNotFoundException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -11,11 +17,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.prs.ps.exception.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -28,7 +29,8 @@ public class ExceptionHandlers {
     /*
      * 커스텀 예외 처리
      * */
-    @ExceptionHandler({PlatformNotFoundException.class, PlatformAccessDeniedException.class, PlatformCreationException.class})
+    @ExceptionHandler({PlatformNotFoundException.class, PlatformAccessDeniedException.class,
+        PlatformCreationException.class})
     public ResponseEntity<String> customEx400(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -37,18 +39,18 @@ public class ExceptionHandlers {
     /*
      * 요청 매핑 실패 예외 처리
      * */
-    @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class, MissingServletRequestParameterException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class,
+        MissingServletRequestParameterException.class})
     public ResponseEntity<String> requestEx(Exception ex) {
         return new ResponseEntity<>("요청 형식이 맞지 않습니다.", HttpStatus.BAD_REQUEST);
     }
 
 
-
     /*
-    * Bean Validation 에 대한 검증 예외 처리
-    * */
+     * Bean Validation 에 대한 검증 예외 처리
+     * */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> validEx(MethodArgumentNotValidException ex){
+    public ResponseEntity<Map<String, String>> validEx(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
 
         // 모든 필드 오류 가져오기
@@ -56,7 +58,8 @@ public class ExceptionHandlers {
 
         // 각각의 필드 오류를 errors 에 put
         for (FieldError fieldError : fieldErrors) {
-            errors.put(fieldError.getField(), messageSource.getMessage(fieldError.getCode(), null, null));
+            errors.put(fieldError.getField(),
+                messageSource.getMessage(fieldError.getCode(), null, null));
         }
 
         // 각 필드별 오류 내용을 반환

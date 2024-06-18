@@ -8,17 +8,18 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
+
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                .components(new Components())
-                .info(apiInfo());
+            .components(new Components())
+            .info(apiInfo());
     }
 
     private Info apiInfo() {
         return new Info()
-                .title("Review Service API Spec") // API의 제목
-                .description("OpenAPI Spec 을 적용한 문서") // API에 대한 설명
-                .version("1.0.0"); // API의 버전
+            .title("Review Service API Spec") // API의 제목
+            .description("OpenAPI Spec 을 적용한 문서") // API에 대한 설명
+            .version("1.0.0"); // API의 버전
     }
 }

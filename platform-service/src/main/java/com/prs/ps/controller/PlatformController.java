@@ -17,14 +17,14 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -45,10 +45,10 @@ public class PlatformController {
 
     @GetMapping("/platform/search")
     @Operation(summary = "플랫폼 검색")
-    public PlatformSearchResultDto searchPlatform(@ModelAttribute @Valid PlatformSearchDto platformSearchDto) {
+    public PlatformSearchResultDto searchPlatform(
+        @ModelAttribute @Valid PlatformSearchDto platformSearchDto) {
         return platformService.getPlatformSearchResult(platformSearchDto);
     }
-
 
 
     @RequiresPermission
@@ -60,12 +60,11 @@ public class PlatformController {
     }
 
 
-
     @RequiresPermission
     @GetMapping("/platforms")
     @Operation(summary = "플랫폼 단순 목록 조회")
     public PlatformPageDto listPlatform(@RequestParam(name = "page") Integer page,
-                                        @RequestParam(name = "status") @Nullable PlatformStatus status) {
+        @RequestParam(name = "status") @Nullable PlatformStatus status) {
         return platformService.getPlatformList(page, status);
     }
 
@@ -75,7 +74,6 @@ public class PlatformController {
     public PlatformInfoDto infoPlatform(@PathVariable(name = "id") Long id) {
         return platformService.getPlatformInfo(id, Platform.mockObject());
     }
-
 
 
 }

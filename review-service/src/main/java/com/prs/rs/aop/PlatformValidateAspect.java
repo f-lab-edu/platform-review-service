@@ -3,6 +3,8 @@ package com.prs.rs.aop;
 import com.prs.rs.annotation.ValidatePlatform;
 import com.prs.rs.client.PlatformServiceClient;
 import com.prs.rs.dto.response.PlatformInfoDto;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -10,9 +12,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 
 @Aspect
@@ -24,8 +23,7 @@ public class PlatformValidateAspect {
     private final PlatformServiceClient platformServiceClient;
 
     @Around("execution(* *(.., @com.prs.rs.annotation.ValidatePlatform (*), ..))")
-    public Object validate(ProceedingJoinPoint joinPoint) throws Throwable{
-
+    public Object validate(ProceedingJoinPoint joinPoint) throws Throwable {
 
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
@@ -33,13 +31,15 @@ public class PlatformValidateAspect {
 
         Object[] parameters = joinPoint.getArgs(); // 파라미터
 
-
         // 파라미터 배열을 탐색하여 @ValidatePlatform 어노테이션이 있는 PlatformInfoDto 타입의 파라미터를 찾아서 검증
-        Loop : for (int i = 0; i < parameterAnnotations.length; i++) {
+        Loop:
+        for (int i = 0; i < parameterAnnotations.length; i++) {
             for (Annotation annotation : parameterAnnotations[i]) {
-                if (annotation instanceof ValidatePlatform && parameters[i] instanceof Long platformId) {
+                if (annotation instanceof ValidatePlatform
+                    && parameters[i] instanceof Long platformId) {
 
-                    PlatformInfoDto platformInfo = platformServiceClient.getPlatformInfo(platformId);
+                    PlatformInfoDto platformInfo = platformServiceClient.getPlatformInfo(
+                        platformId);
 
                     Integer platformParameterIdx = findParameterIdx(parameters);
 
@@ -58,7 +58,7 @@ public class PlatformValidateAspect {
      */
     private Integer findParameterIdx(Object[] parameters) {
         for (int i = 0; i < parameters.length; i++) {
-            if(parameters[i] instanceof PlatformInfoDto) {
+            if (parameters[i] instanceof PlatformInfoDto) {
                 return i;
             }
         }

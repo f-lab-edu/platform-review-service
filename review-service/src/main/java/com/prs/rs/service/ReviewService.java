@@ -11,12 +11,15 @@ import com.prs.rs.dto.response.ReviewListResultDto;
 
 public interface ReviewService {
 
-    Review addReview(Long platformId, PlatformInfoDto platformInfoDto, MemberInfoDto memberInfoDto, ReviewWriteDto reviewWriteDto);
+    Review addReview(Long platformId, PlatformInfoDto platformInfoDto, MemberInfoDto memberInfoDto,
+        ReviewWriteDto reviewWriteDto);
 
-    Review updateReview(Long reviewId, Review review, MemberInfoDto memberInfoDto, ReviewEditDto reviewEditDto);
+    Review updateReview(Long reviewId, Review review, MemberInfoDto memberInfoDto,
+        ReviewEditDto reviewEditDto);
 
     void deleteReview(Long reviewId, Review review, MemberInfoDto memberInfoDto);
 
-    ReviewListResultDto getReviewList(ReviewListDto reviewListDto, Long platformId, PlatformInfoDto mockObject);
+    ReviewListResultDto getReviewList(ReviewListDto reviewListDto, Long platformId,
+        PlatformInfoDto mockObject);
 
 }

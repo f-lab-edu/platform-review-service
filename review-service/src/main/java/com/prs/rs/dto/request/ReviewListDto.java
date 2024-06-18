@@ -26,8 +26,7 @@ public class ReviewListDto {
     private SortType sort;
 
 
-    public ReviewListDto()
-    {
+    public ReviewListDto() {
         this.sort = SortType.DATE_DESC;
         this.page = 0;
     }

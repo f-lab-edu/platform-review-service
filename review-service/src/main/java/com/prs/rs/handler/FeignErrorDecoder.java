@@ -3,10 +3,9 @@ package com.prs.rs.handler;
 import com.prs.rs.exception.ReviewAccessDeniedException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Component;
 
 @Component
 public class FeignErrorDecoder implements ErrorDecoder {
@@ -28,7 +27,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
         Map<String, Class<? extends Exception>> exceptionMap = errorCodeMap.get(response.status());
 
         for (String key : exceptionMap.keySet()) {
-            if(methodKey.contains(key)) {
+            if (methodKey.contains(key)) {
                 Class<? extends Exception> exceptionClass = exceptionMap.get(key);
                 try {
                     return exceptionClass.getDeclaredConstructor().newInstance();

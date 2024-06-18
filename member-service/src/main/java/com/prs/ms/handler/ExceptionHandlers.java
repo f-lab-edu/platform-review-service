@@ -3,6 +3,9 @@ package com.prs.ms.handler;
 
 import com.prs.ms.exception.MemberNotFoundException;
 import com.prs.ms.exception.MemberSignUpException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -13,10 +16,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -37,7 +36,8 @@ public class ExceptionHandlers {
     /*
      * 요청 매핑 실패 예외 처리
      * */
-    @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class, MissingServletRequestParameterException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, IllegalArgumentException.class,
+        MissingServletRequestParameterException.class})
     public ResponseEntity<String> requestEx(Exception ex) {
         return new ResponseEntity<>("요청 형식이 맞지 않습니다.", HttpStatus.BAD_REQUEST);
     }
@@ -47,7 +47,7 @@ public class ExceptionHandlers {
      * Bean Validation 에 대한 검증 예외 처리
      * */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> validEx(MethodArgumentNotValidException ex){
+    public ResponseEntity<Map<String, String>> validEx(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
 
         // 모든 필드 오류 가져오기
@@ -55,7 +55,8 @@ public class ExceptionHandlers {
 
         // 각각의 필드 오류를 errors 에 put
         for (FieldError fieldError : fieldErrors) {
-            errors.put(fieldError.getField(), messageSource.getMessage(fieldError.getCode(), null, null));
+            errors.put(fieldError.getField(),
+                messageSource.getMessage(fieldError.getCode(), null, null));
         }
 
         // 각 필드별 오류 내용을 반환
