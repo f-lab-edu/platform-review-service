@@ -13,9 +13,9 @@ public interface ReviewService {
 
     Review addReview(Long platformId, PlatformInfoDto platformInfoDto, MemberInfoDto memberInfoDto, ReviewWriteDto reviewWriteDto);
 
-    Review updateReview(ReviewEditDto reviewEditDto);
+    Review updateReview(Long reviewId, Review review, MemberInfoDto memberInfoDto, ReviewEditDto reviewEditDto);
 
-    void deleteReview(Long id);
+    void deleteReview(Long reviewId, Review review, MemberInfoDto memberInfoDto);
 
     ReviewListResultDto getReviewList(ReviewListDto reviewListDto, Long platformId, PlatformInfoDto mockObject);
 

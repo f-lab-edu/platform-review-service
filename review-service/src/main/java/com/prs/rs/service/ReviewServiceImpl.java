@@ -1,10 +1,8 @@
 package com.prs.rs.service;
 
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prs.rs.annotation.ValidateMember;
 import com.prs.rs.annotation.ValidatePlatform;
+import com.prs.rs.annotation.ValidateReview;
 import com.prs.rs.client.MemberServiceClient;
 import com.prs.rs.domain.Review;
 import com.prs.rs.dto.request.PlatformRefreshDto;
@@ -15,6 +13,7 @@ import com.prs.rs.dto.response.MemberInfoDto;
 import com.prs.rs.dto.response.PlatformInfoDto;
 import com.prs.rs.dto.response.ReviewListResultDto;
 import com.prs.rs.event.KafkaProducer;
+import com.prs.rs.exception.ReviewAccessDeniedException;
 import com.prs.rs.repository.ReviewRepository;
 import com.prs.rs.type.SortType;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import static com.prs.rs.common.ConstantValues.*;
 
@@ -41,6 +40,14 @@ public class ReviewServiceImpl implements ReviewService {
     private final KafkaProducer kafkaProducer;
     private final MemberServiceClient memberServiceClient;
 
+    private final Map<SortType, Sort> sortMap = new HashMap<>();
+
+    {
+        sortMap.put(SortType.STAR_ASC, Sort.by(Sort.Direction.ASC, "star"));
+        sortMap.put(SortType.STAR_DESC, Sort.by(Sort.Direction.DESC, "star"));
+        sortMap.put(SortType.DATE_ASC, Sort.by(Sort.Direction.ASC, "createdDt"));
+        sortMap.put(SortType.DATE_DESC, Sort.by(Sort.Direction.DESC, "createdDt"));
+    }
 
 
 
@@ -62,37 +69,50 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public Review updateReview(ReviewEditDto reviewEditDto) {
-            // Review review = reviewPersistenceManager.validateAndUpdateReview(reviewEditDto);
-            // removeCache(review.getPlatform().getId());
-            return null;
+    public Review updateReview(@ValidateReview Long reviewId, Review review,
+                               @ValidateMember MemberInfoDto memberInfoDto,
+                               ReviewEditDto reviewEditDto) {
+
+        checkAuthority(memberInfoDto, review);
+
+
+        Byte beforeStar = review.getStar();
+
+        // 리뷰 수정
+        review.changeInfo(reviewEditDto.getContent(), reviewEditDto.getStar());
+        reviewRepository.save(review);
+
+        // 리뷰에서 별점이 수정되었다면 플랫폼 평점 업데이트 진행
+        if(!beforeStar.equals(review.getStar())) {
+           updatePlatform(review.getPlatformId());
+        }
+        return review;
     }
+
+
 
     @Override
-    public void deleteReview(Long reviewId) {
-            // Long platformId = reviewPersistenceManager.validateAndDeleteReview(reviewId);
-            // removeCache(platformId);
-    }
+    public void deleteReview(@ValidateReview Long reviewId, Review review,
+                             @ValidateMember MemberInfoDto memberInfoDto) {
+        try {
+            checkAuthority(memberInfoDto, review);
+        } catch (ReviewAccessDeniedException e) {
+            // 어드민인지 체크
+            if (!memberServiceClient.checkAdmin()) {
+                throw new ReviewAccessDeniedException(e.getMessage());
+            }
+        }
 
-    public PlatformInfoDto validatePlatform(Long platformId) {
-//        Optional<Platform> platform = platformRepository.findById(platformId);
-//
-//        if (platform.isEmpty()) {
-//            throw new PlatformNotFoundException();
-//        }
-//        if (platform.get().getStatus() != PlatformStatus.ACCEPT) {
-//            throw new PlatformAccessDeniedException();
-//        }
+        reviewRepository.delete(review);
 
-
-        return null;
+        updatePlatform(review.getPlatformId());
     }
 
 
     @Override
     public ReviewListResultDto getReviewList(ReviewListDto reviewListDto, @ValidatePlatform Long platformId, PlatformInfoDto platform) {
 
-        Pageable pageRequest = PageRequest.of(reviewListDto.getPage(), PAGE_SIZE, sortConverter(reviewListDto.getSort()));
+        Pageable pageRequest = PageRequest.of(reviewListDto.getPage(), PAGE_SIZE, sortMap.get(reviewListDto.getSort()));
         Page<Review> reviews = reviewRepository.findByIdFromPlatform(platform.getPlatformId(), pageRequest);
 
 
@@ -148,16 +168,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
 
-
-    /*
-    * SortType -> Sort
-    * */
-    private Sort sortConverter(SortType sort) {
-        switch (sort) {
-            case STAR_ASC ->  { return Sort.by(Sort.Direction.ASC, "star"); }
-            case STAR_DESC ->  { return Sort.by(Sort.Direction.DESC, "star"); }
-            case DATE_DESC -> { return Sort.by(Sort.Direction.DESC, "createdDt"); }
-            default ->  { return Sort.by(Sort.Direction.ASC, "createdDt"); }
+    private void checkAuthority(MemberInfoDto memberInfoDto, Review review) {
+        if (!memberInfoDto.getMemberId().equals(review.getMemberId())) {
+            throw new ReviewAccessDeniedException();
         }
     }
 

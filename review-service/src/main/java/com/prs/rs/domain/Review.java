@@ -6,11 +6,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Review extends Auditable {
 
@@ -32,6 +33,10 @@ public class Review extends Auditable {
     private Long platformId;
 
 
+    public static Review mockObject() {
+        return new Review();
+    }
+
     public Review(Long platformId, Long memberId, String content, Byte star) {
         this.content = content;
         this.star = star;
@@ -39,9 +44,8 @@ public class Review extends Auditable {
         this.platformId = platformId;
     }
 
-    public Review changeInfo(String content, Byte star) {
+    public void changeInfo(String content, Byte star) {
         this.content = content;
         this.star = star;
-        return this;
     }
 }
