@@ -1,19 +1,19 @@
 package com.prs.rs.aop;
 
 
+import static com.library.validate.utils.CommonAopUtils.*;
+
 import com.prs.rs.annotation.ValidateReview;
 import com.prs.rs.domain.Review;
 import com.prs.rs.exception.ReviewNotFoundException;
 import com.prs.rs.repository.ReviewRepository;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 
@@ -29,9 +29,7 @@ public class ReviewValidateAspect {
     @Around("execution(* *(.., @com.prs.rs.annotation.ValidateReview (*), ..))")
     public Object validate(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Method method = methodSignature.getMethod();
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations(); // 파라미터에 달린 어노테이션 가져오기
+        Annotation[][] parameterAnnotations = getParameterAnnotationList(joinPoint);
 
         Object[] parameters = joinPoint.getArgs(); // 파라미터
 

@@ -1,4 +1,4 @@
-package com.prs.ps.dto.response;
+package com.library.validate.dto;
 
 
 import lombok.Data;
@@ -8,4 +8,5 @@ public class MemberInfoDto {
 
     private Long memberId;
     private String name;
+
 }

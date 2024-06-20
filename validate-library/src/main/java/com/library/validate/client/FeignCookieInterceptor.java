@@ -1,4 +1,4 @@
-package com.prs.ps.client;
+package com.library.validate.client;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;

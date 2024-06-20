@@ -1,7 +1,6 @@
-package com.prs.rs.config;
+package com.library.validate.config;
 
-
-import com.prs.rs.client.FeignCookieInterceptor;
+import com.library.validate.client.FeignCookieInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

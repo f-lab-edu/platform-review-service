@@ -5,7 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@SpringBootApplication
+
+@SpringBootApplication(scanBasePackages = {"com.library.validate", "com.prs.rs"})
 @EnableJpaAuditing
 @EnableFeignClients
 public class ReviewServiceApplication {

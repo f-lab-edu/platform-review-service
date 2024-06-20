@@ -1,7 +1,7 @@
-package com.prs.ps.aop;
+package com.library.validate.aop;
 
-import com.prs.ps.client.MemberServiceClient;
-import com.prs.ps.exception.PlatformAccessDeniedException;
+import com.library.validate.client.MemberServiceClient;
+import com.library.validate.exception.AccessDeniedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
@@ -17,11 +17,10 @@ public class PermissionCheckAspect {
     private final MemberServiceClient memberServiceClient;
 
 
-    @Before("@annotation(com.prs.ps.annotation.RequiresPermission)")
+    @Before("@annotation(com.library.validate.annotation.RequiresPermission)")
     public void check() {
         if (!memberServiceClient.checkAdmin()) {
-            throw new PlatformAccessDeniedException();
+            throw new AccessDeniedException();
         }
-
     }
 }

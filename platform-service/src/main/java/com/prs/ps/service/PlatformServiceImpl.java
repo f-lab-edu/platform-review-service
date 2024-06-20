@@ -1,14 +1,13 @@
 package com.prs.ps.service;
 
 
+import com.library.validate.dto.MemberInfoDto;
 import com.prs.ps.annotation.ValidatePlatform;
-import com.prs.ps.client.MemberServiceClient;
 import com.prs.ps.common.ConstantValues;
 import com.prs.ps.domain.Platform;
 import com.prs.ps.dto.request.PlatformApplyDto;
 import com.prs.ps.dto.request.PlatformEditDto;
 import com.prs.ps.dto.request.PlatformSearchDto;
-import com.prs.ps.dto.response.MemberInfoDto;
 import com.prs.ps.dto.response.PlatformInfoDto;
 import com.prs.ps.dto.response.PlatformPageDto;
 import com.prs.ps.dto.response.PlatformSearchResultDto;
@@ -22,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.library.validate.annotation.ValidateMember;
 
 @Service
 @Slf4j
@@ -29,15 +29,14 @@ import org.springframework.stereotype.Service;
 public class PlatformServiceImpl implements PlatformService {
 
     private final PlatformRepository platformRepository;
-    private final MemberServiceClient memberServiceClient;
 
     @Override
-    public Platform addPlatform(PlatformApplyDto applyDto) {
+    public Platform addPlatform(PlatformApplyDto applyDto,
+        @ValidateMember MemberInfoDto memberInfoDto) {
 
-        MemberInfoDto memberInfo = memberServiceClient.getMemberInfo();
 
         Platform platform = new Platform(applyDto.getName(), applyDto.getUrl(),
-            applyDto.getDescription(), memberInfo.getMemberId());
+            applyDto.getDescription(), memberInfoDto.getMemberId());
 
         return platformRepository.save(platform);
     }
@@ -74,12 +73,12 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     @Override
-    public PlatformInfoDto getPlatformInfo(@ValidatePlatform Long platformId, Platform platform) {
-        MemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(platform.getMemberId());
+    public PlatformInfoDto getPlatformInfo(@ValidatePlatform Long platformId, Platform platform,
+                                            @ValidateMember MemberInfoDto memberInfoDto) {
         return PlatformInfoDto.builder()
             .platformName(platform.getName())
             .description(platform.getDescription())
-            .memberName(memberInfo.getName())
+            .memberName(memberInfoDto.getName())
             .url(platform.getUrl())
             .status(platform.getStatus())
             .modifiedDt(platform.getModifiedDt())
