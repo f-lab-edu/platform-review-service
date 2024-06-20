@@ -10,6 +10,7 @@ import com.prs.ps.dto.request.PlatformEditDto;
 import com.prs.ps.dto.request.PlatformSearchDto;
 import com.prs.ps.dto.response.PlatformInfoDto;
 import com.prs.ps.dto.response.PlatformPageDto;
+import com.prs.ps.dto.response.PlatformRefreshDto;
 import com.prs.ps.dto.response.PlatformSearchResultDto;
 import com.prs.ps.repository.PlatformRepository;
 import com.prs.ps.type.PlatformStatus;
@@ -29,6 +30,20 @@ import com.library.validate.annotation.ValidateMember;
 public class PlatformServiceImpl implements PlatformService {
 
     private final PlatformRepository platformRepository;
+
+    @Override
+    @Transactional
+    public void refreshPlatformScore(@ValidatePlatform Long platformId, Platform platform,
+        PlatformRefreshDto platformRefreshDto) {
+        switch (platformRefreshDto.getAction()) {
+            case CREATE -> platform.addScore(platformRefreshDto.getScore());
+            case DELETE -> platform.subScore(platformRefreshDto.getScore());
+            case UPDATE -> platform.updateScore(platformRefreshDto.getBeforeScore(),
+                platformRefreshDto.getScore());
+        }
+    }
+
+
 
     @Override
     public Platform addPlatform(PlatformApplyDto applyDto,
@@ -113,14 +128,12 @@ public class PlatformServiceImpl implements PlatformService {
             .platformList(new ArrayList<>())
             .totalSize(result.getTotalElements()).build();
 
-        // 리뷰 갯수를 가져오는 로직이 구현되어 있어야 한다.
-
         // entity -> dto 매핑
         for (Platform platform : result.getContent()) {
             PlatformSearchResultDto.Dto dto = PlatformSearchResultDto.Dto.builder()
-                .reviewNumber(platform.getId())
-                .star(platform.getStar())
-                .reviewCount(1)
+                .platformId(platform.getId())
+                .score(platform.getAvgScore())
+                .reviewCount(platform.getReviewCount())
                 .name(platform.getName())
                 .description(platform.getDescription())
                 .build();

@@ -24,7 +24,7 @@ public class Review extends Auditable {
     private String content;
 
     @Column(nullable = false)
-    private Byte star;
+    private Integer score;
 
     @Column(nullable = false)
     private Long memberId;
@@ -37,15 +37,15 @@ public class Review extends Auditable {
         return new Review();
     }
 
-    public Review(Long platformId, Long memberId, String content, Byte star) {
+    public Review(Long platformId, Long memberId, String content, Integer score) {
         this.content = content;
-        this.star = star;
+        this.score = score;
         this.memberId = memberId;
         this.platformId = platformId;
     }
 
-    public void changeInfo(String content, Byte star) {
+    public void changeInfo(String content, Integer score) {
         this.content = content;
-        this.star = star;
+        this.score = score;
     }
 }

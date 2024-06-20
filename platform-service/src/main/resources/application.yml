@@ -3,6 +3,11 @@ spring:
     name:
       platform-service
 
+  data:
+    redis:
+      host: redis
+      port: 6379
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://mydb:3306/fluence

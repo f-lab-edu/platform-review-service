@@ -22,7 +22,7 @@ public class ReviewListResultDto {
     private String platformName;
     private String platformUrl;
     private String platformDescription;
-    private Byte platformStar;
+    private Integer platformScore;
 
     private Integer pageNo;
     private Integer totalPage;
@@ -40,7 +40,7 @@ public class ReviewListResultDto {
         private Long reviewNumber;
         private String memberName;
         private String content;
-        private Byte star;
+        private Integer score;
 
         @JsonSerialize(using = LocalDateTimeSerializer.class)
         @JsonDeserialize(using = LocalDateTimeDeserializer.class)

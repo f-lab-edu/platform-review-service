@@ -28,6 +28,6 @@ public class ReviewWriteDto {
     @NotNull
     @Range(min = 1, max = 10)
     @Schema(description = "별점 1 ~ 10")
-    private Byte star;
+    private Integer score;
 
 }

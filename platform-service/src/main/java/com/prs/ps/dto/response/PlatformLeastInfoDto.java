@@ -12,5 +12,5 @@ public class PlatformLeastInfoDto {
     private String name;
     private String url;
     private String description;
-    private Byte star;
+    private Integer score;
 }
