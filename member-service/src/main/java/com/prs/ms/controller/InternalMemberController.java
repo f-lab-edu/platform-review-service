@@ -35,7 +35,7 @@ public class InternalMemberController {
      * 멤버 다수의 정보 반환
      * */
     @GetMapping("/members")
-    public HashMap<Long, MemberResponseDto> memberInfo(
+    public HashMap<Long, MemberResponseDto> membersInfo(
         @RequestParam("memberIdList") List<Long> memberIdList) {
         return internalMemberService.findMembers(memberIdList);
     }
