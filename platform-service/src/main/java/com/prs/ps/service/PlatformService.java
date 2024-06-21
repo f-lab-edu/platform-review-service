@@ -19,7 +19,7 @@ public interface PlatformService {
 
     PlatformPageDto getPlatformList(Integer page, PlatformStatus status);
 
-    PlatformInfoDto getPlatformInfo(Long platformId, Platform emptyPlatform, MemberInfoDto emptyMemberInfo);
+    PlatformInfoDto getPlatformInfo(Long platformId, Platform emptyPlatform);
 
     PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto);
 

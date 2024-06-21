@@ -74,7 +74,7 @@ public class PlatformController {
     @Operation(summary = "플랫폼 상세 조회")
     @RequiresPermission
     public PlatformInfoDto infoPlatform(@PathVariable(name = "id") Long id) {
-        return platformService.getPlatformInfo(id, Platform.getEmpty(), new MemberInfoDto());
+        return platformService.getPlatformInfo(id, Platform.getEmpty());
     }
 
 
