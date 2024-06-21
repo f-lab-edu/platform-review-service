@@ -2,6 +2,7 @@ package com.prs.ps.service;
 
 
 import com.library.validate.dto.MemberInfoDto;
+import com.prs.ps.annotation.Retry;
 import com.prs.ps.annotation.ValidatePlatform;
 import com.prs.ps.common.ConstantValues;
 import com.prs.ps.domain.Platform;
@@ -31,10 +32,12 @@ public class PlatformServiceImpl implements PlatformService {
 
     private final PlatformRepository platformRepository;
 
+
     @Override
     @Transactional
     public void refreshPlatformScore(@ValidatePlatform Long platformId, Platform platform,
         PlatformRefreshDto platformRefreshDto) {
+
         switch (platformRefreshDto.getAction()) {
             case CREATE -> platform.addScore(platformRefreshDto.getScore());
             case DELETE -> platform.subScore(platformRefreshDto.getScore());
