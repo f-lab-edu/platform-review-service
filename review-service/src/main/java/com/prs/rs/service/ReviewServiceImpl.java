@@ -123,7 +123,7 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewListResultDto createReviewResultDto(PlatformInfoDto platform,
         Page<Review> reviews) {
         ReviewListResultDto result = ReviewListResultDto.builder()
-            .platformNo(platform.getPlatformId())
+            .platformId(platform.getPlatformId())
             .platformName(platform.getName())
             .platformUrl(platform.getUrl())
             .platformDescription(platform.getDescription())
@@ -140,7 +140,7 @@ public class ReviewServiceImpl implements ReviewService {
             MemberInfoDto memberInfoDto = memberNameList.get(review.getMemberId());
 
             ReviewListResultDto.Dto dto = ReviewListResultDto.Dto.builder()
-                .reviewNumber(review.getId())
+                .reviewId(review.getId())
                 .memberName(memberInfoDto.getName())
                 .content(review.getContent())
                 .score(review.getScore())
