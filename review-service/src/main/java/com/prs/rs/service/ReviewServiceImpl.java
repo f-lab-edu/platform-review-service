@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,9 +39,13 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ReviewServiceImpl implements ReviewService {
 
+
     private final ReviewRepository reviewRepository;
     private final KafkaProducer kafkaProducer;
     private final MemberServiceClient memberServiceClient;
+    private final CacheControlManager cacheControlManager;
+
+    private static final String CACHE_GROUP = "reviews";
 
     private final Map<SortType, Sort> sortMap = new HashMap<>();
 
@@ -64,7 +69,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 플랫폼 평점 업데이트
         updatePlatform(review.getPlatformId(), ActionStatus.CREATE, review.getScore());
-
+        removeCache(review.getPlatformId());
         return review;
     }
 
@@ -86,6 +91,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (!beforeScore.equals(review.getScore())) {
             updatePlatform(review.getPlatformId(), review.getScore(), beforeScore);
         }
+        removeCache(review.getPlatformId());
         return review;
     }
 
@@ -105,10 +111,14 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.delete(review);
 
         updatePlatform(review.getPlatformId(), ActionStatus.DELETE, review.getScore());
+        removeCache(review.getPlatformId());
     }
 
 
     @Override
+    @Cacheable(value = "reviews",
+        key = "#reviewListDto.platformId + '#' + #reviewListDto.page + '#' + #reviewListDto.sort",
+        cacheManager = "redisCacheManager")
     public ReviewListResultDto getReviewList(ReviewListDto reviewListDto,
         @ValidatePlatform Long platformId, PlatformInfoDto platform) {
 
@@ -184,6 +194,14 @@ public class ReviewServiceImpl implements ReviewService {
         if (!memberInfoDto.getMemberId().equals(review.getMemberId())) {
             throw new ReviewAccessDeniedException();
         }
+    }
+
+    /*
+     * 플랫폼 ID에 해당하는 리뷰 캐시 삭제
+     */
+    private void removeCache(Long platformId) {
+        String pattern = CACHE_GROUP + "::" + platformId + "*";
+        cacheControlManager.evictCacheByPattern(pattern);
     }
 
 
