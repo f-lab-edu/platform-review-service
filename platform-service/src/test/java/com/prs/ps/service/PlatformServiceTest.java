@@ -1,14 +1,19 @@
 package com.prs.ps.service;
 
+import com.library.common.client.MemberServiceClient;
 import com.library.common.dto.MemberInfoDto;
 import com.prs.ps.common.ConstantValues;
 import com.prs.ps.domain.Platform;
 import com.prs.ps.dto.request.PlatformApplyDto;
+import com.prs.ps.dto.request.PlatformEditDto;
 import com.prs.ps.dto.request.PlatformSearchDto;
+import com.prs.ps.dto.response.PlatformInfoDto;
 import com.prs.ps.dto.response.PlatformSearchResultDto;
 import com.prs.ps.repository.PlatformRepository;
+import com.prs.ps.type.PlatformStatus;
 import com.prs.ps.type.SortType;
 import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +32,7 @@ import org.springframework.data.domain.Pageable;
 
 import static com.prs.ps.common.CommonUtils.getMockPlatform;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,11 +44,15 @@ class PlatformServiceTest {
     @InjectMocks
     PlatformServiceImpl platformService;
 
+    @Mock
+    MemberServiceClient memberServiceClient;
+
+
     private static final String DEFAULT_USERNAME = "testUser";
     private static final String DEFAULT_PLATFORM_NAME = "네이버";
 
     @Test
-    @DisplayName("플랫폼 등록")
+    @DisplayName("addPlatformTest() - 플랫폼 등록")
     void addPlatformTest() {
 
         // given
@@ -70,7 +80,29 @@ class PlatformServiceTest {
 
 
     @Test
-    @DisplayName("플랫폼 검색")
+    @DisplayName("updatePlatformTest() - 플랫폼 수정 테스트")
+    void updatePlatformTest() {
+        // given
+        Platform savedPlatform = getMockPlatform("네이버");
+
+        PlatformEditDto requestDto = new PlatformEditDto(savedPlatform.getId(), "수정된 플랫폼입니다.",
+            PlatformStatus.ACCEPT);
+
+        // when
+        Platform updatedPlatform = platformService.updatePlatform(requestDto,
+            requestDto.getPlatformId(),
+            savedPlatform);
+
+        // then
+        Assertions.assertThat(updatedPlatform.getDescription())
+            .isEqualTo(requestDto.getDescription());
+
+        Assertions.assertThat(updatedPlatform.getStatus()).isEqualTo(requestDto.getStatus());
+    }
+
+
+    @Test
+    @DisplayName("getPlatformSearchResultTest() - 플랫폼 검색 테스트")
     void getPlatformSearchResultTest() {
         // given
         int totalSize = 13; // 총 플랫폼 수가 13개라는 가정 하에 테스트
@@ -102,6 +134,36 @@ class PlatformServiceTest {
         Assertions.assertThat(result.getPlatformCount()).isEqualTo(10); // 현재 페이지의 데이터 갯수
         Assertions.assertThat(result.getTotalSize()).isEqualTo(totalSize);
 
+    }
+
+
+    @Test
+    @DisplayName("getPlatformInfoTest() - 특정 플랫폼 조회 테스트")
+    void getPlatformInfoTest() {
+        // given
+        Platform savedPlatform = spy(getMockPlatform("네이버"));
+
+        when(savedPlatform.getId()).thenReturn(1L);
+
+        MemberInfoDto memberInfo = new MemberInfoDto(1L, "testUser");
+
+        when(memberServiceClient.getMemberInfoById(any())).thenReturn(memberInfo);
+
+        // when
+        PlatformInfoDto platformInfo = platformService.getPlatformInfo(savedPlatform.getId(),
+            savedPlatform);
+
+        // then
+        Assertions.assertThat(platformInfo.getPlatformName())
+            .isEqualTo(savedPlatform.getName()); // 이름
+
+        Assertions.assertThat(platformInfo.getDescription())
+            .isEqualTo(savedPlatform.getDescription()); // 설명
+
+        Assertions.assertThat(platformInfo.getUrl()).isEqualTo(savedPlatform.getUrl()); // URL
+
+        Assertions.assertThat(platformInfo.getMemberName())
+            .isEqualTo(memberInfo.getName()); // 등록한 멤버 이름
     }
 
 

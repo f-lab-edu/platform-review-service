@@ -17,19 +17,17 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class InternalPlatformServiceTest {
 
-    @Autowired
-    InternalPlatformService platformService;
+    @InjectMocks
+    InternalPlatformServiceImpl platformService;
 
-    @MockBean
+    @Mock
     PlatformRepository platformRepository;
 
 
@@ -41,12 +39,11 @@ public class InternalPlatformServiceTest {
         savedPlatform.changeInfo(savedPlatform.getDescription(), PlatformStatus.ACCEPT);
 
         when(savedPlatform.getId()).thenReturn(1L);
-        when(platformRepository.findById(any())).thenReturn(Optional.of(savedPlatform));
 
         //when
         PlatformLeastInfoDto platformInfo = platformService.findPlatformInfoById(
             savedPlatform.getId(),
-            Platform.getEmpty());
+            savedPlatform);
 
         // then
         Assertions.assertThat(platformInfo.getPlatformId()).isEqualTo(savedPlatform.getId()); // 아이디
@@ -65,25 +62,11 @@ public class InternalPlatformServiceTest {
         Platform savedPlatform = spy(getMockPlatform("네이버"));
 
         when(savedPlatform.getId()).thenReturn(1L);
-        when(platformRepository.findById(any())).thenReturn(Optional.of(savedPlatform));
 
         // when & then
         Assertions.assertThatThrownBy(() -> platformService.findPlatformInfoById(
             savedPlatform.getId(),
-            Platform.getEmpty())).isInstanceOf(PlatformAccessDeniedException.class);
-    }
-
-
-    @Test
-    @DisplayName("findPlatformInfoByIdTest() - 존재하지 않는 플랫폼에 대한 접근")
-    void findPlatformInfoByIdEx2() {
-        // given
-        when(platformRepository.findById(any())).thenReturn(Optional.empty());
-
-        // when & then
-        Assertions.assertThatThrownBy(() -> platformService.findPlatformInfoById(
-            1L,
-            Platform.getEmpty())).isInstanceOf(PlatformNotFoundException.class);
+            savedPlatform)).isInstanceOf(PlatformAccessDeniedException.class);
     }
 
 

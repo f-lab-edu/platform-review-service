@@ -97,7 +97,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public void deleteReview(@ValidateReview Long reviewId, Review review,
+    public Boolean deleteReview(@ValidateReview Long reviewId, Review review,
         @ValidateMember MemberInfoDto memberInfoDto) {
         try {
             checkAuthority(memberInfoDto, review);
@@ -112,6 +112,8 @@ public class ReviewServiceImpl implements ReviewService {
 
         updatePlatform(review.getPlatformId(), ActionStatus.DELETE, review.getScore());
         removeCache(review.getPlatformId());
+
+        return true;
     }
 
 

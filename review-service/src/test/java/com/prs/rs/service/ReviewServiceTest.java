@@ -15,6 +15,7 @@ import com.prs.rs.type.SortType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -51,6 +52,9 @@ class ReviewServiceTest {
 
     @InjectMocks
     private ReviewServiceImpl reviewService;
+
+    @Mock
+    private CacheControlManager cacheControlManager;
 
 
     @Test
@@ -162,6 +166,60 @@ class ReviewServiceTest {
             .containsOnly(reviewIdList); // 리뷰 아이디들이 잘 가져와졌는지 확인
 
 
+    }
+
+    @Test
+    @DisplayName("deleteReviewTest() - 리뷰 삭제 테스트")
+    void deleteReviewTest() {
+        // given
+        Review writtenReview = getMockReview(1L, 1L);
+
+        MemberInfoDto member = new MemberInfoDto(writtenReview.getMemberId(), "testUser23");
+
+        // when
+        Boolean result = reviewService.deleteReview(writtenReview.getId(), writtenReview, member);
+
+        // then
+        Assertions.assertThat(result).isEqualTo(true);
+    }
+
+
+    @Test
+    @DisplayName("deleteReviewEx1() - 리뷰 삭제를 요청하는 사람이 작성자가 아닌 경우")
+    void deleteReviewEx1() {
+        // given
+        Review writtenReview = getMockReview(1L, 1L);
+
+        MemberInfoDto differentMember = new MemberInfoDto(writtenReview.getMemberId() + 1,
+            "testUser23");
+
+        when(memberServiceClient.checkAdmin()).thenReturn(false);
+
+        // when & then
+        Assertions
+            .assertThatThrownBy(
+                () -> reviewService.deleteReview(writtenReview.getId(), writtenReview,
+                    differentMember))
+            .isInstanceOf(ReviewAccessDeniedException.class);
+    }
+
+
+    @Test
+    @DisplayName("deleteReviewAdminTest() - 리뷰 삭제를 요청하는 사람이 작성자가 아니지만 어드민 권한을 가졌을 경우")
+    void deleteReviewAdminTest() {
+        // given
+        Review writtenReview = getMockReview(1L, 1L);
+
+        MemberInfoDto differentMember = new MemberInfoDto(writtenReview.getMemberId() + 1,
+            "testUser23");
+        when(memberServiceClient.checkAdmin()).thenReturn(true);
+
+        // when
+        Boolean result = reviewService.deleteReview(writtenReview.getId(), writtenReview,
+            differentMember);
+
+        // then
+        Assertions.assertThat(result).isEqualTo(true);
     }
 
 

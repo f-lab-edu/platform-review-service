@@ -17,7 +17,7 @@ public interface ReviewService {
     Review updateReview(Long reviewId, Review review, MemberInfoDto memberInfoDto,
         ReviewEditDto reviewEditDto);
 
-    void deleteReview(Long reviewId, Review review, MemberInfoDto memberInfoDto);
+    Boolean deleteReview(Long reviewId, Review review, MemberInfoDto memberInfoDto);
 
     ReviewListResultDto getReviewList(ReviewListDto reviewListDto, Long platformId,
         PlatformInfoDto mockObject);
