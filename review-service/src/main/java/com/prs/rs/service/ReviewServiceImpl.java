@@ -3,9 +3,9 @@ package com.prs.rs.service;
 import static com.prs.rs.common.ConstantValues.PAGE_SIZE;
 import static com.prs.rs.common.ConstantValues.PLATFORM_REFRESH_TOPIC;
 
-import com.library.validate.annotation.ValidateMember;
-import com.library.validate.client.MemberServiceClient;
-import com.library.validate.dto.MemberInfoDto;
+import com.library.common.annotation.ValidateMember;
+import com.library.common.client.MemberServiceClient;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.rs.annotation.ValidatePlatform;
 import com.prs.rs.annotation.ValidateReview;
 import com.prs.rs.domain.Review;

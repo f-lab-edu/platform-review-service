@@ -1,6 +1,6 @@
 package com.prs.ps.service;
 
-import com.library.validate.dto.MemberInfoDto;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.ps.common.ConstantValues;
 import com.prs.ps.domain.Platform;
 import com.prs.ps.dto.request.PlatformApplyDto;

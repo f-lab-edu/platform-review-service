@@ -2,10 +2,12 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.5'
+	id 'java-library'
+	id 'maven-publish'
 }
 
-group = 'com.rs'
-version = '0.0.1-SNAPSHOT'
+group = 'com.library'
+version = '1.0'
 
 java {
 	toolchain {
@@ -21,7 +23,6 @@ configurations {
 
 repositories {
 	mavenCentral()
-	mavenLocal()
 }
 
 ext {
@@ -29,27 +30,19 @@ ext {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	runtimeOnly 'com.h2database:h2:2.2.224'
-
 	annotationProcessor 'org.projectlombok:lombok'
-
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.mockito:mockito-core'
-
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-
-	implementation 'com.library:common:1.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 dependencyManagement {
@@ -60,4 +53,27 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = 'com.library'
+			artifactId = 'common'
+			version = '1.0'
+
+			from components.java
+
+			versionMapping {
+				usage('java-api') {
+					fromResolutionOf('runtimeClasspath')
+				}
+				usage('java-runtime') {
+					fromResolutionResult()
+				}
+			}
+		}
+
+
+	}
+
 }

@@ -1,8 +1,7 @@
 package com.prs.ps.service;
 
-
-import com.library.validate.client.MemberServiceClient;
-import com.library.validate.dto.MemberInfoDto;
+import com.library.common.client.MemberServiceClient;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.ps.annotation.ValidatePlatform;
 import com.prs.ps.common.ConstantValues;
 import com.prs.ps.domain.Platform;
@@ -19,11 +18,12 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import com.library.validate.annotation.ValidateMember;
+import com.library.common.annotation.ValidateMember;
 
 @Service
 @Slf4j
@@ -108,6 +108,9 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     @Override
+    @Cacheable(value = "search_results",
+        key = "#platformSearchDto.query + '#' + #platformSearchDto.page + '#' + #platformSearchDto.sort",
+        cacheManager = "redisCacheManager")
     public PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto) {
 
         // 검색

@@ -1,9 +1,9 @@
 package com.prs.ps.controller;
 
 
-import com.library.validate.annotation.RequiresPermission;
-import com.library.validate.aop.PermissionCheckAspect;
-import com.library.validate.dto.MemberInfoDto;
+import com.library.common.annotation.RequiresPermission;
+import com.library.common.aop.PermissionCheckAspect;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.ps.domain.Platform;
 import com.prs.ps.dto.request.PlatformApplyDto;
 import com.prs.ps.dto.request.PlatformEditDto;

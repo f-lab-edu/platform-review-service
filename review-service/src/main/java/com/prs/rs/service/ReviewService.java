@@ -1,7 +1,7 @@
 package com.prs.rs.service;
 
 
-import com.library.validate.dto.MemberInfoDto;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.rs.domain.Review;
 import com.prs.rs.dto.request.ReviewEditDto;
 import com.prs.rs.dto.request.ReviewListDto;

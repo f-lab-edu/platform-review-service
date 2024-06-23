@@ -6,8 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import com.library.validate.client.MemberServiceClient;
-import com.library.validate.dto.MemberInfoDto;
+import com.library.common.client.MemberServiceClient;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.ps.domain.Platform;
 import com.prs.ps.dto.request.PlatformEditDto;
 import com.prs.ps.dto.response.PlatformInfoDto;

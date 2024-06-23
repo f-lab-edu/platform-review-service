@@ -3,6 +3,7 @@ spring:
     name:
       review-service
 
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://mydb:3306/fluence
@@ -21,6 +22,10 @@ spring:
 
   messages:
     basename: errors
+  data:
+    redis:
+      port: 6379
+      host: redis
 
 
 server:

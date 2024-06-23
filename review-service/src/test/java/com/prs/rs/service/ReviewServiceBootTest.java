@@ -2,8 +2,8 @@ package com.prs.rs.service;
 
 import static org.mockito.Mockito.when;
 
-import com.library.validate.client.MemberServiceClient;
-import com.library.validate.dto.MemberInfoDto;
+import com.library.common.client.MemberServiceClient;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.rs.domain.Review;
 import com.prs.rs.event.KafkaProducer;
 import com.prs.rs.exception.ReviewAccessDeniedException;
