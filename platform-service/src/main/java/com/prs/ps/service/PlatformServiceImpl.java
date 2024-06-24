@@ -1,7 +1,7 @@
 package com.prs.ps.service;
 
-
-import com.library.validate.dto.MemberInfoDto;
+import com.library.common.client.MemberServiceClient;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.ps.annotation.ValidatePlatform;
 import com.prs.ps.common.ConstantValues;
 import com.prs.ps.domain.Platform;
@@ -18,11 +18,12 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import com.library.validate.annotation.ValidateMember;
+import com.library.common.annotation.ValidateMember;
 
 @Service
 @Slf4j
@@ -30,11 +31,14 @@ import com.library.validate.annotation.ValidateMember;
 public class PlatformServiceImpl implements PlatformService {
 
     private final PlatformRepository platformRepository;
+    private final MemberServiceClient memberServiceClient;
+
 
     @Override
     @Transactional
     public void refreshPlatformScore(@ValidatePlatform Long platformId, Platform platform,
         PlatformRefreshDto platformRefreshDto) {
+
         switch (platformRefreshDto.getAction()) {
             case CREATE -> platform.addScore(platformRefreshDto.getScore());
             case DELETE -> platform.subScore(platformRefreshDto.getScore());
@@ -88,12 +92,15 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     @Override
-    public PlatformInfoDto getPlatformInfo(@ValidatePlatform Long platformId, Platform platform,
-                                            @ValidateMember MemberInfoDto memberInfoDto) {
+    public PlatformInfoDto getPlatformInfo(@ValidatePlatform Long platformId, Platform platform) {
+
+        MemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(
+            platform.getMemberId());
+
         return PlatformInfoDto.builder()
             .platformName(platform.getName())
             .description(platform.getDescription())
-            .memberName(memberInfoDto.getName())
+            .memberName(memberInfo.getName())
             .url(platform.getUrl())
             .status(platform.getStatus())
             .modifiedDt(platform.getModifiedDt())
@@ -101,6 +108,9 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     @Override
+    @Cacheable(value = "search_results",
+        key = "#platformSearchDto.query + '#' + #platformSearchDto.page + '#' + #platformSearchDto.sort",
+        cacheManager = "redisCacheManager")
     public PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto) {
 
         // 검색

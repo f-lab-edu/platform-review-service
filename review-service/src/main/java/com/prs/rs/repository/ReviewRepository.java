@@ -1,7 +1,6 @@
 package com.prs.rs.repository;
 
 import com.prs.rs.domain.Review;
-import com.prs.rs.dto.request.PlatformRefreshDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

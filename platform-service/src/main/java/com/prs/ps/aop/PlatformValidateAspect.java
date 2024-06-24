@@ -1,6 +1,6 @@
 package com.prs.ps.aop;
 
-import static com.library.validate.utils.CommonAopUtils.getParameterAnnotationList;
+import static com.library.common.utils.CommonAopUtils.getParameterAnnotationList;
 
 import com.prs.ps.annotation.ValidatePlatform;
 import com.prs.ps.domain.Platform;
