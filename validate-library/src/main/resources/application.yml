@@ -1,8 +1,0 @@
-spring:
-  application:
-    name: validate-library
-eureka:
-  client:
-    register-with-eureka: false
-
-

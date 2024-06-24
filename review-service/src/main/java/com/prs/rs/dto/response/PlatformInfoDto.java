@@ -1,6 +1,7 @@
 package com.prs.rs.dto.response;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

@@ -1,6 +1,6 @@
 package com.prs.ps.service;
 
-import com.library.validate.dto.MemberInfoDto;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.ps.domain.Platform;
 import com.prs.ps.dto.request.PlatformApplyDto;
 import com.prs.ps.dto.request.PlatformEditDto;
@@ -19,7 +19,7 @@ public interface PlatformService {
 
     PlatformPageDto getPlatformList(Integer page, PlatformStatus status);
 
-    PlatformInfoDto getPlatformInfo(Long platformId, Platform emptyPlatform, MemberInfoDto emptyMemberInfo);
+    PlatformInfoDto getPlatformInfo(Long platformId, Platform emptyPlatform);
 
     PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto);
 
