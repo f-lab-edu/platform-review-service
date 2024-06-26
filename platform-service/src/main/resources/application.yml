@@ -3,12 +3,10 @@ spring:
     name:
       platform-service
 
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mydb:3306/fluence
-    username: root
-  profiles:
+
+  profiles: # DB 패스워드
     include: password
+
 
   jpa:
     hibernate:
@@ -29,13 +27,11 @@ eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
-    service-url:
-      defaultZone: http://eureka-server:8761/eureka
 
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
-kafka:
-  server: kafka:9092
+
+
 
 

@@ -1,7 +1,7 @@
 package com.prs.rs.aop;
 
 
-import static com.library.validate.utils.CommonAopUtils.*;
+import static com.library.common.utils.CommonAopUtils.*;
 
 import com.prs.rs.annotation.ValidateReview;
 import com.prs.rs.domain.Review;

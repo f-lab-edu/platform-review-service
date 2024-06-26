@@ -27,15 +27,15 @@ public class PlatformSearchResultDto {
     @Data
     public static class Dto {
 
-        private Long reviewNumber;
+        private Long platformId;
 
         private String name;
 
         private String description;
 
-        private Byte star;
+        private Integer score;
 
-        private Integer reviewCount;
+        private Long reviewCount;
     }
 
 }

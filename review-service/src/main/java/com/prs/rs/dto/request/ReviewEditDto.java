@@ -28,6 +28,6 @@ public class ReviewEditDto {
     @NotNull
     @Range(min = 1, max = 10)
     @Schema(description = "수정할 별점")
-    private Byte star;
+    private Integer score;
 
 }

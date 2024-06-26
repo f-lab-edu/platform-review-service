@@ -3,9 +3,9 @@ package com.prs.rs.service;
 import static com.prs.rs.common.ConstantValues.PAGE_SIZE;
 import static com.prs.rs.common.ConstantValues.PLATFORM_REFRESH_TOPIC;
 
-import com.library.validate.annotation.ValidateMember;
-import com.library.validate.client.MemberServiceClient;
-import com.library.validate.dto.MemberInfoDto;
+import com.library.common.annotation.ValidateMember;
+import com.library.common.client.MemberServiceClient;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.rs.annotation.ValidatePlatform;
 import com.prs.rs.annotation.ValidateReview;
 import com.prs.rs.domain.Review;
@@ -18,6 +18,7 @@ import com.prs.rs.dto.response.ReviewListResultDto;
 import com.prs.rs.event.KafkaProducer;
 import com.prs.rs.exception.ReviewAccessDeniedException;
 import com.prs.rs.repository.ReviewRepository;
+import com.prs.rs.type.ActionStatus;
 import com.prs.rs.type.SortType;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,9 +39,13 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ReviewServiceImpl implements ReviewService {
 
+
     private final ReviewRepository reviewRepository;
     private final KafkaProducer kafkaProducer;
     private final MemberServiceClient memberServiceClient;
+    private final CacheControlManager cacheControlManager;
+
+    private static final String CACHE_GROUP = "reviews";
 
     private final Map<SortType, Sort> sortMap = new HashMap<>();
 
@@ -58,12 +64,12 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 리뷰 저장
         Review review = new Review(platformInfoDto.getPlatformId(), memberInfoDto.getMemberId(),
-            reviewWriteDto.getContent(), reviewWriteDto.getStar());
+            reviewWriteDto.getContent(), reviewWriteDto.getScore());
         reviewRepository.save(review);
 
         // 플랫폼 평점 업데이트
-        updatePlatform(review.getPlatformId());
-
+        updatePlatform(review.getPlatformId(), ActionStatus.CREATE, review.getScore());
+        removeCache(review.getPlatformId());
         return review;
     }
 
@@ -75,22 +81,23 @@ public class ReviewServiceImpl implements ReviewService {
 
         checkAuthority(memberInfoDto, review);
 
-        Byte beforeStar = review.getStar();
+        Integer beforeScore = review.getScore();
 
         // 리뷰 수정
-        review.changeInfo(reviewEditDto.getContent(), reviewEditDto.getStar());
+        review.changeInfo(reviewEditDto.getContent(), reviewEditDto.getScore());
         reviewRepository.save(review);
 
         // 리뷰에서 별점이 수정되었다면 플랫폼 평점 업데이트 진행
-        if (!beforeStar.equals(review.getStar())) {
-            updatePlatform(review.getPlatformId());
+        if (!beforeScore.equals(review.getScore())) {
+            updatePlatform(review.getPlatformId(), review.getScore(), beforeScore);
         }
+        removeCache(review.getPlatformId());
         return review;
     }
 
 
     @Override
-    public void deleteReview(@ValidateReview Long reviewId, Review review,
+    public Boolean deleteReview(@ValidateReview Long reviewId, Review review,
         @ValidateMember MemberInfoDto memberInfoDto) {
         try {
             checkAuthority(memberInfoDto, review);
@@ -103,11 +110,17 @@ public class ReviewServiceImpl implements ReviewService {
 
         reviewRepository.delete(review);
 
-        updatePlatform(review.getPlatformId());
+        updatePlatform(review.getPlatformId(), ActionStatus.DELETE, review.getScore());
+        removeCache(review.getPlatformId());
+
+        return true;
     }
 
 
     @Override
+    @Cacheable(value = "reviews",
+        key = "#reviewListDto.platformId + '#' + #reviewListDto.page + '#' + #reviewListDto.sort",
+        cacheManager = "redisCacheManager")
     public ReviewListResultDto getReviewList(ReviewListDto reviewListDto,
         @ValidatePlatform Long platformId, PlatformInfoDto platform) {
 
@@ -122,11 +135,11 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewListResultDto createReviewResultDto(PlatformInfoDto platform,
         Page<Review> reviews) {
         ReviewListResultDto result = ReviewListResultDto.builder()
-            .platformNo(platform.getPlatformId())
+            .platformId(platform.getPlatformId())
             .platformName(platform.getName())
             .platformUrl(platform.getUrl())
             .platformDescription(platform.getDescription())
-            .platformStar(platform.getStar())
+            .platformScore(platform.getScore())
             .totalReview(reviews.getTotalElements())
             .pageNo(reviews.getNumber())
             .reviewList(new ArrayList<>())
@@ -139,10 +152,10 @@ public class ReviewServiceImpl implements ReviewService {
             MemberInfoDto memberInfoDto = memberNameList.get(review.getMemberId());
 
             ReviewListResultDto.Dto dto = ReviewListResultDto.Dto.builder()
-                .reviewNumber(review.getId())
+                .reviewId(review.getId())
                 .memberName(memberInfoDto.getName())
                 .content(review.getContent())
-                .star(review.getStar())
+                .score(review.getScore())
                 .createdDt(review.getCreatedDt())
                 .modifiedDt(review.getModifiedDt()).build();
             result.getReviewList().add(dto);
@@ -161,9 +174,20 @@ public class ReviewServiceImpl implements ReviewService {
         return memberServiceClient.getMembers(memberIdList);
     }
 
+    private void updatePlatform(Long platformId, ActionStatus actionStatus, Integer score) {
 
-    private void updatePlatform(Long platformId) {
-        PlatformRefreshDto platformRefreshDto = reviewRepository.findByIdAndFetchInfo(platformId);
+        PlatformRefreshDto platformRefreshDto = new PlatformRefreshDto(platformId, actionStatus,
+            score);
+
+        kafkaProducer.platformRefresh(PLATFORM_REFRESH_TOPIC, platformRefreshDto);
+    }
+
+
+    private void updatePlatform(Long platformId, Integer afterScore, Integer beforeScore) {
+
+        PlatformRefreshDto platformRefreshDto = new PlatformRefreshDto(platformId,
+            ActionStatus.UPDATE, afterScore, beforeScore);
+
         kafkaProducer.platformRefresh(PLATFORM_REFRESH_TOPIC, platformRefreshDto);
     }
 
@@ -172,6 +196,14 @@ public class ReviewServiceImpl implements ReviewService {
         if (!memberInfoDto.getMemberId().equals(review.getMemberId())) {
             throw new ReviewAccessDeniedException();
         }
+    }
+
+    /*
+     * 플랫폼 ID에 해당하는 리뷰 캐시 삭제
+     */
+    private void removeCache(Long platformId) {
+        String pattern = CACHE_GROUP + "::" + platformId + "*";
+        cacheControlManager.evictCacheByPattern(pattern);
     }
 
 

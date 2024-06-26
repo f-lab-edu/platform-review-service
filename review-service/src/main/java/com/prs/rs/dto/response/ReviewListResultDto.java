@@ -18,11 +18,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReviewListResultDto {
 
-    private Long platformNo;
+    private Long platformId;
     private String platformName;
     private String platformUrl;
     private String platformDescription;
-    private Byte platformStar;
+    private Integer platformScore;
 
     private Integer pageNo;
     private Integer totalPage;
@@ -37,10 +37,10 @@ public class ReviewListResultDto {
     @Builder
     public static class Dto {
 
-        private Long reviewNumber;
+        private Long reviewId;
         private String memberName;
         private String content;
-        private Byte star;
+        private Integer score;
 
         @JsonSerialize(using = LocalDateTimeSerializer.class)
         @JsonDeserialize(using = LocalDateTimeDeserializer.class)

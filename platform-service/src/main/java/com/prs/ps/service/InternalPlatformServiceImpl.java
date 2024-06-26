@@ -23,7 +23,7 @@ public class InternalPlatformServiceImpl implements InternalPlatformService {
             .platformId(platform.getId())
             .url(platform.getUrl())
             .name(platform.getName())
-            .star(platform.getStar())
+            .score(platform.getAvgScore())
             .description(platform.getDescription()).build();
     }
 }

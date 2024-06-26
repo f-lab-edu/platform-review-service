@@ -1,5 +1,7 @@
 package com.prs.ps.repository;
 
+import static com.prs.ps.domain.QPlatform.*;
+
 import com.prs.ps.domain.Platform;
 import com.prs.ps.domain.QPlatform;
 import com.prs.ps.type.PlatformStatus;
@@ -25,13 +27,13 @@ public class PlatformRepositoryImpl implements CustomPlatformRepository {
 
     @Override
     public Page<Platform> findByStatus(Pageable pageable, PlatformStatus status) {
-        List<Platform> platforms = query.select(QPlatform.platform).from(QPlatform.platform)
-            .where((status != null) ? QPlatform.platform.status.eq(status) : null)
+        List<Platform> platforms = query.select(platform).from(platform)
+            .where((status != null) ? platform.status.eq(status) : null)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
-        Long platformCount = query.select(QPlatform.platform.count()).from(QPlatform.platform)
+        Long platformCount = query.select(platform.count()).from(platform)
             .fetchFirst();
 
         return new PageImpl<>(platforms, pageable, platformCount);
@@ -39,16 +41,16 @@ public class PlatformRepositoryImpl implements CustomPlatformRepository {
 
     @Override
     public Page<Platform> findByQuery(String platformName, Pageable pageable, SortType sort) {
-        List<Platform> platforms = query.select(QPlatform.platform).from(QPlatform.platform)
-            .where(QPlatform.platform.status.eq(PlatformStatus.ACCEPT)
-                .and(QPlatform.platform.name.contains(platformName)))
+        List<Platform> platforms = query.select(platform).from(platform)
+            .where(platform.status.eq(PlatformStatus.ACCEPT)
+                .and(platform.name.contains(platformName)))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .orderBy(sortConverter(sort))
             .fetch();
 
-        Long platformCount = query.select(QPlatform.platform.count()).from(QPlatform.platform)
-            .where(QPlatform.platform.name.contains(platformName))
+        Long platformCount = query.select(platform.count()).from(platform)
+            .where(platform.name.contains(platformName))
             .fetchFirst();
 
         return new PageImpl<>(platforms, pageable, platformCount);
@@ -59,17 +61,17 @@ public class PlatformRepositoryImpl implements CustomPlatformRepository {
 
         switch (sort) {
             case STAR_ASC -> {
-                return new OrderSpecifier(Order.ASC, QPlatform.platform.star);
+                return new OrderSpecifier(Order.ASC, platform.avgScore);
             }
             case STAR_DESC -> {
-                return new OrderSpecifier(Order.DESC, QPlatform.platform.star);
+                return new OrderSpecifier(Order.DESC, platform.avgScore);
             }
 
             case DATE_DESC -> {
-                return new OrderSpecifier(Order.DESC, QPlatform.platform.createdDt);
+                return new OrderSpecifier(Order.DESC, platform.createdDt);
             }
             default -> {
-                return new OrderSpecifier(Order.ASC, QPlatform.platform.createdDt);
+                return new OrderSpecifier(Order.ASC, platform.createdDt);
             }
         }
 
