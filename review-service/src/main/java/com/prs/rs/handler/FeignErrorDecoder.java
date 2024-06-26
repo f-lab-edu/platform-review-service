@@ -1,5 +1,6 @@
 package com.prs.rs.handler;
 
+import com.prs.rs.exception.InvalidRequestException;
 import com.prs.rs.exception.ReviewAccessDeniedException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 public class FeignErrorDecoder implements ErrorDecoder {
 
     private final Map<String, Class<? extends Exception>> exceptionMap500 = new HashMap<>();
+    private final Map<String, Class<? extends Exception>> exceptionMap400 = new HashMap<>();
     private final Map<Integer, Map<String, Class<? extends Exception>>> errorCodeMap = new HashMap<>();
 
 
@@ -18,13 +20,17 @@ public class FeignErrorDecoder implements ErrorDecoder {
         exceptionMap500.put("Member", ReviewAccessDeniedException.class);
         exceptionMap500.put("Platform", ReviewAccessDeniedException.class);
         errorCodeMap.put(500, exceptionMap500);
+
+        exceptionMap400.put("Member", InvalidRequestException.class);
+        errorCodeMap.put(400, exceptionMap400);
     }
 
 
     @Override
     public Exception decode(String methodKey, Response response) {
 
-        Map<String, Class<? extends Exception>> exceptionMap = errorCodeMap.get(response.status());
+        Map<String, Class<? extends Exception>> exceptionMap = errorCodeMap.getOrDefault(
+            response.status(), new HashMap<>());
 
         for (String key : exceptionMap.keySet()) {
             if (methodKey.contains(key)) {

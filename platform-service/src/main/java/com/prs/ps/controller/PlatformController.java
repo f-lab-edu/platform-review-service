@@ -1,7 +1,9 @@
 package com.prs.ps.controller;
 
 
-import com.prs.ps.annotation.RequiresPermission;
+import com.library.common.annotation.RequiresPermission;
+import com.library.common.aop.PermissionCheckAspect;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.ps.domain.Platform;
 import com.prs.ps.dto.request.PlatformApplyDto;
 import com.prs.ps.dto.request.PlatformEditDto;
@@ -39,7 +41,7 @@ public class PlatformController {
     @PostMapping("/platform")
     @Operation(summary = "플랫폼 등록")
     public String applyPlatform(@RequestBody @Valid PlatformApplyDto applyDto) {
-        platformService.addPlatform(applyDto);
+        platformService.addPlatform(applyDto, new MemberInfoDto());
         return "ok";
     }
 
@@ -51,28 +53,28 @@ public class PlatformController {
     }
 
 
-    @RequiresPermission
     @PatchMapping("/platform")
     @Operation(summary = "플랫폼 수정")
+    @RequiresPermission
     public String editPlatform(@RequestBody @Valid PlatformEditDto editDto) {
-        platformService.updatePlatform(editDto, editDto.getPlatformId(), Platform.mockObject());
+        platformService.updatePlatform(editDto, editDto.getPlatformId(), Platform.getEmpty());
         return "ok";
     }
 
 
-    @RequiresPermission
     @GetMapping("/platforms")
     @Operation(summary = "플랫폼 단순 목록 조회")
+    @RequiresPermission
     public PlatformPageDto listPlatform(@RequestParam(name = "page") Integer page,
         @RequestParam(name = "status") @Nullable PlatformStatus status) {
         return platformService.getPlatformList(page, status);
     }
 
-    @RequiresPermission
     @GetMapping("/platform/{id}")
     @Operation(summary = "플랫폼 상세 조회")
+    @RequiresPermission
     public PlatformInfoDto infoPlatform(@PathVariable(name = "id") Long id) {
-        return platformService.getPlatformInfo(id, Platform.mockObject());
+        return platformService.getPlatformInfo(id, Platform.getEmpty());
     }
 
 

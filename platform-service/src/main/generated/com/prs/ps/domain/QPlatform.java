@@ -21,6 +21,8 @@ public class QPlatform extends EntityPathBase<Platform> {
 
     public final QAuditable _super = new QAuditable(this);
 
+    public final NumberPath<Integer> avgScore = createNumber("avgScore", Integer.class);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDt = _super.createdDt;
 
@@ -35,9 +37,11 @@ public class QPlatform extends EntityPathBase<Platform> {
 
     public final StringPath name = createString("name");
 
-    public final NumberPath<Byte> star = createNumber("star", Byte.class);
+    public final NumberPath<Long> reviewCount = createNumber("reviewCount", Long.class);
 
     public final EnumPath<com.prs.ps.type.PlatformStatus> status = createEnum("status", com.prs.ps.type.PlatformStatus.class);
+
+    public final NumberPath<Long> totalScore = createNumber("totalScore", Long.class);
 
     public final StringPath url = createString("url");
 

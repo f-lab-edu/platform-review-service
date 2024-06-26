@@ -1,16 +1,16 @@
 package com.prs.ps.service;
 
-
+import com.library.common.client.MemberServiceClient;
+import com.library.common.dto.MemberInfoDto;
 import com.prs.ps.annotation.ValidatePlatform;
-import com.prs.ps.client.MemberServiceClient;
 import com.prs.ps.common.ConstantValues;
 import com.prs.ps.domain.Platform;
 import com.prs.ps.dto.request.PlatformApplyDto;
 import com.prs.ps.dto.request.PlatformEditDto;
 import com.prs.ps.dto.request.PlatformSearchDto;
-import com.prs.ps.dto.response.MemberInfoDto;
 import com.prs.ps.dto.response.PlatformInfoDto;
 import com.prs.ps.dto.response.PlatformPageDto;
+import com.prs.ps.dto.response.PlatformRefreshDto;
 import com.prs.ps.dto.response.PlatformSearchResultDto;
 import com.prs.ps.repository.PlatformRepository;
 import com.prs.ps.type.PlatformStatus;
@@ -18,10 +18,12 @@ import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.library.common.annotation.ValidateMember;
 
 @Service
 @Slf4j
@@ -31,13 +33,29 @@ public class PlatformServiceImpl implements PlatformService {
     private final PlatformRepository platformRepository;
     private final MemberServiceClient memberServiceClient;
 
-    @Override
-    public Platform addPlatform(PlatformApplyDto applyDto) {
 
-        MemberInfoDto memberInfo = memberServiceClient.getMemberInfo();
+    @Override
+    @Transactional
+    public void refreshPlatformScore(@ValidatePlatform Long platformId, Platform platform,
+        PlatformRefreshDto platformRefreshDto) {
+
+        switch (platformRefreshDto.getAction()) {
+            case CREATE -> platform.addScore(platformRefreshDto.getScore());
+            case DELETE -> platform.subScore(platformRefreshDto.getScore());
+            case UPDATE -> platform.updateScore(platformRefreshDto.getBeforeScore(),
+                platformRefreshDto.getScore());
+        }
+    }
+
+
+
+    @Override
+    public Platform addPlatform(PlatformApplyDto applyDto,
+        @ValidateMember MemberInfoDto memberInfoDto) {
+
 
         Platform platform = new Platform(applyDto.getName(), applyDto.getUrl(),
-            applyDto.getDescription(), memberInfo.getMemberId());
+            applyDto.getDescription(), memberInfoDto.getMemberId());
 
         return platformRepository.save(platform);
     }
@@ -75,7 +93,10 @@ public class PlatformServiceImpl implements PlatformService {
 
     @Override
     public PlatformInfoDto getPlatformInfo(@ValidatePlatform Long platformId, Platform platform) {
-        MemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(platform.getMemberId());
+
+        MemberInfoDto memberInfo = memberServiceClient.getMemberInfoById(
+            platform.getMemberId());
+
         return PlatformInfoDto.builder()
             .platformName(platform.getName())
             .description(platform.getDescription())
@@ -87,6 +108,9 @@ public class PlatformServiceImpl implements PlatformService {
     }
 
     @Override
+    @Cacheable(value = "search_results",
+        key = "#platformSearchDto.query + '#' + #platformSearchDto.page + '#' + #platformSearchDto.sort",
+        cacheManager = "redisCacheManager")
     public PlatformSearchResultDto getPlatformSearchResult(PlatformSearchDto platformSearchDto) {
 
         // 검색
@@ -114,14 +138,12 @@ public class PlatformServiceImpl implements PlatformService {
             .platformList(new ArrayList<>())
             .totalSize(result.getTotalElements()).build();
 
-        // 리뷰 갯수를 가져오는 로직이 구현되어 있어야 한다.
-
         // entity -> dto 매핑
         for (Platform platform : result.getContent()) {
             PlatformSearchResultDto.Dto dto = PlatformSearchResultDto.Dto.builder()
-                .reviewNumber(platform.getId())
-                .star(platform.getStar())
-                .reviewCount(1)
+                .platformId(platform.getId())
+                .score(platform.getAvgScore())
+                .reviewCount(platform.getReviewCount())
                 .name(platform.getName())
                 .description(platform.getDescription())
                 .build();

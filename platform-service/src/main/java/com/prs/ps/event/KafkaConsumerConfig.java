@@ -1,6 +1,8 @@
 package com.prs.ps.event;
 
 
+import static com.prs.ps.common.ConstantValues.PLATFORM_CONSUMER_GROUP;
+
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ public class KafkaConsumerConfig {
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> properties = new HashMap<>();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.server"));
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "consumerGroupId");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, PLATFORM_CONSUMER_GROUP);
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 

@@ -32,8 +32,14 @@ public class Platform extends Auditable {
     @Column(length = 50, nullable = false)
     private String description;
 
-    @Column(nullable = false)
-    private Byte star;
+    @Column(nullable = false, name = "avg_score")
+    private Integer avgScore;
+
+    @Column(nullable = false, name = "total_score")
+    private Long totalScore;
+
+    @Column(nullable = false, name = "review_count")
+    private Long reviewCount;
 
 
     @Enumerated(EnumType.STRING)
@@ -53,7 +59,9 @@ public class Platform extends Auditable {
         this.description = description;
         this.memberId = memberId;
         this.status = PlatformStatus.WAIT;
-        this.star = 0;
+        this.avgScore = 0;
+        this.totalScore = 0L;
+        this.reviewCount = 0L;
     }
 
     public Platform changeInfo(String description, PlatformStatus status) {
@@ -66,13 +74,36 @@ public class Platform extends Auditable {
         return this;
     }
 
-    public Platform updateStar(Long reviewCount, Long totalStar) {
-        this.star = (reviewCount == 0L) ? (byte) 0 : (byte) (totalStar / reviewCount);
-        return this;
+
+    public static Platform getEmpty() {
+        return new Platform();
     }
 
+    private void refreshAvgScore() {
+        if (this.reviewCount == 0L) {
+            this.avgScore = 0;
+        } else {
+            long result = this.totalScore / this.reviewCount;
+            this.avgScore = (int) result;
+        }
 
-    public static Platform mockObject() {
-        return new Platform();
+    }
+
+    public void addScore(Integer score) {
+        ++this.reviewCount;
+        this.totalScore += score;
+        refreshAvgScore();
+    }
+
+    public void subScore(Integer score) {
+        --this.reviewCount;
+        this.totalScore -= score;
+        refreshAvgScore();
+    }
+
+    public void updateScore(Integer beforeScore, Integer afterScore) {
+        this.totalScore -= beforeScore;
+        this.totalScore += afterScore;
+        refreshAvgScore();
     }
 }

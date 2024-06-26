@@ -1,6 +1,7 @@
 package com.prs.ms.controller;
 
 
+import com.prs.ms.annotation.CheckAnonymous;
 import com.prs.ms.dto.MemberResponseDto;
 import com.prs.ms.service.InternalMemberService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +35,7 @@ public class InternalMemberController {
      * 멤버 다수의 정보 반환
      * */
     @GetMapping("/members")
-    public HashMap<Long, MemberResponseDto> memberInfo(
+    public HashMap<Long, MemberResponseDto> membersInfo(
         @RequestParam("memberIdList") List<Long> memberIdList) {
         return internalMemberService.findMembers(memberIdList);
     }
@@ -44,12 +45,14 @@ public class InternalMemberController {
      * 요청하고 있는 멤버의 정보 반환
      * */
     @GetMapping("/member")
+    @CheckAnonymous
     public MemberResponseDto requestMemberInfo() {
         return internalMemberService.findMemberInfo();
     }
 
 
     @GetMapping("/auth/check-admin")
+    @CheckAnonymous
     public Boolean checkAdmin() {
         return internalMemberService.checkAdmin();
     }

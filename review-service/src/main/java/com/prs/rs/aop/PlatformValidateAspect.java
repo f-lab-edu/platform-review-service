@@ -1,16 +1,16 @@
 package com.prs.rs.aop;
 
+import static com.library.common.utils.CommonAopUtils.*;
+
 import com.prs.rs.annotation.ValidatePlatform;
 import com.prs.rs.client.PlatformServiceClient;
 import com.prs.rs.dto.response.PlatformInfoDto;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 
@@ -25,9 +25,7 @@ public class PlatformValidateAspect {
     @Around("execution(* *(.., @com.prs.rs.annotation.ValidatePlatform (*), ..))")
     public Object validate(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Method method = methodSignature.getMethod();
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations(); // 파라미터에 달린 어노테이션 가져오기
+        Annotation[][] parameterAnnotations = getParameterAnnotationList(joinPoint);
 
         Object[] parameters = joinPoint.getArgs(); // 파라미터
 

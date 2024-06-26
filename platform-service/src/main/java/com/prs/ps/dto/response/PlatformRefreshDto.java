@@ -1,12 +1,15 @@
 package com.prs.ps.dto.response;
 
+import com.prs.ps.type.ActionStatus;
 import lombok.Data;
 
 @Data
 public class PlatformRefreshDto {
 
+    private String messageId;
     private Long platformId;
-    private Long reviewCount;
-    private Long reviewTotalStar;
+    private ActionStatus action;
+    private Integer score;
+    private Integer beforeScore;
 
 }
