@@ -45,11 +45,10 @@ public class InternalMemberServiceTest {
         // given
         setContextByUsername(username);
 
-        Member member = new Member(username, password, MemberRole.ROLE_USER);
-        Member spyMember = spy(member);
+        Member member = getMockMember(username);
 
-        when(spyMember.getId()).thenReturn(1L);
-        when(memberRepository.findByUsername(any())).thenReturn(Optional.of(spyMember));
+        when(member.getId()).thenReturn(1L);
+        when(memberRepository.findByUsername(any())).thenReturn(Optional.of(member));
 
         // when
         MemberResponseDto memberInfo = internalMemberService.findMemberInfo();
@@ -65,10 +64,9 @@ public class InternalMemberServiceTest {
     void findMemberInfoByIdTest() {
 
         // given
-        Member member = new Member(username, "123123", MemberRole.ROLE_USER);
-        Member spyMember = spy(member);
-        when(spyMember.getId()).thenReturn(1L);
-        when(memberRepository.findById(any())).thenReturn(Optional.of(spyMember));
+        Member member = getMockMember(username);
+        when(member.getId()).thenReturn(1L);
+        when(memberRepository.findById(any())).thenReturn(Optional.of(member));
 
         // when
         MemberResponseDto memberInfo = internalMemberService.findMemberInfoById(1L);
@@ -95,6 +93,10 @@ public class InternalMemberServiceTest {
         Assertions.assertThat(members.keySet()).containsOnly(memberIdList.toArray(new Long[0]));
     }
 
+    
+    private Member getMockMember(String username) {
+        return spy(new Member(username, password, MemberRole.ROLE_USER));
+    }
     
 
     private List<Member> getMockMemberList(Integer count) {
