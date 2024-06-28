@@ -1,11 +1,14 @@
 package com.library.common.handlers;
 
-
 import com.library.common.exception.AccessDeniedException;
+import feign.FeignException;
+import feign.RetryableException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class CommonExceptionHandlers {
 
 
@@ -26,6 +30,26 @@ public class CommonExceptionHandlers {
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<String> customEx(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({FeignException.BadRequest.class, FeignException.InternalServerError.class})
+    public ResponseEntity<String> feignEx400(Exception ex) {
+        log.error(ex.getMessage());
+        return new ResponseEntity<>("올바르지 못한 요청입니다.", HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler({CallNotPermittedException.class})
+    public ResponseEntity<String> circuitEx500(Exception ex) {
+        log.error(ex.getMessage());
+        return new ResponseEntity<>("잠시 후 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    @ExceptionHandler({RetryableException.class})
+    public ResponseEntity<String> feignEx503(RetryableException ex) {
+        log.error(ex.getMessage());
+        return new ResponseEntity<>("내부 서비스 연결에 실패했습니다.", HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     /*
