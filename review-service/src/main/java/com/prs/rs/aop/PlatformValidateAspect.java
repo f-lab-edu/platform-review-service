@@ -3,6 +3,7 @@ package com.prs.rs.aop;
 import static com.library.common.utils.CommonAopUtils.*;
 
 import com.prs.rs.annotation.ValidatePlatform;
+import com.prs.rs.client.PlatformCircuitClient;
 import com.prs.rs.client.PlatformServiceClient;
 import com.prs.rs.dto.response.PlatformInfoDto;
 import java.lang.annotation.Annotation;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PlatformValidateAspect {
 
-    private final PlatformServiceClient platformServiceClient;
+    private final PlatformCircuitClient platformServiceClient;
 
     @Around("execution(* *(.., @com.prs.rs.annotation.ValidatePlatform (*), ..))")
     public Object validate(ProceedingJoinPoint joinPoint) throws Throwable {

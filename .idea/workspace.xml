@@ -24,7 +24,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "work",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/workspace/java/platform-review-service/review-service",
+    "last_opened_file_path": "C:/workspace/java/platform-review-service/platform-service",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -39,6 +39,7 @@
       <updated>1718278446327</updated>
       <workItem from="1718278447322" duration="11000" />
       <workItem from="1719523455057" duration="14000" />
+      <workItem from="1719719141655" duration="7000" />
     </task>
     <servers />
   </component>
