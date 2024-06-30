@@ -2,11 +2,10 @@ package com.library.common.aop;
 
 import static com.library.common.utils.CommonAopUtils.getParameterAnnotationList;
 
-import com.library.common.client.MemberServiceClient;
+import com.library.common.client.MemberCircuitClient;
 import com.library.common.dto.MemberInfoDto;
 import java.lang.annotation.Annotation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,12 +14,11 @@ import com.library.common.annotation.ValidateMember;
 
 
 @Aspect
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MemberValidateAspect {
 
-    private final MemberServiceClient memberServiceClient;
+    private final MemberCircuitClient memberServiceClient;
 
     @Around("execution(* *(.., @com.library.common.annotation.ValidateMember (*), ..))")
     public Object validate(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -35,7 +33,6 @@ public class MemberValidateAspect {
             for (Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof ValidateMember
                     && parameters[i] instanceof MemberInfoDto) {
-
                     MemberInfoDto memberInfo = memberServiceClient.getMemberInfo();
                     parameters[i] = memberInfo;
 

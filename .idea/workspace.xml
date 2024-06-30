@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d12364f2-99d2-4bba-a8a4-849064d7218a" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/member-service/src/main/java/com/prs/ms/dto/MemberResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/platform-service/src/main/java/com/prs/ps/client/MemberServiceClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/platform-service/src/main/java/com/prs/ps/dto/response/MemberInfoDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/member-service/src/main/java/com/prs/ms/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/member-service/src/main/java/com/prs/ms/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/member-service/src/main/java/com/prs/ms/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/member-service/src/main/java/com/prs/ms/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/member-service/src/main/java/com/prs/ms/controller/MemberController.java" beforeDir="false" afterPath="$PROJECT_DIR$/member-service/src/main/java/com/prs/ms/controller/MemberController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/platform-service/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform-service/src/main/java/com/prs/ps/PlatformServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/platform-service/src/main/java/com/prs/ps/PlatformServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform-service/src/main/java/com/prs/ps/service/PlatformServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/platform-service/src/main/java/com/prs/ps/service/PlatformServiceImpl.java" afterDir="false" />
-    </list>
+    <list default="true" id="d12364f2-99d2-4bba-a8a4-849064d7218a" name="변경" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,9 +10,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2hp60Ism9xN6umtQPBQJQGbZ7pZ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -48,6 +38,8 @@
       <option name="presentableId" value="Default" />
       <updated>1718278446327</updated>
       <workItem from="1718278447322" duration="11000" />
+      <workItem from="1719523455057" duration="14000" />
+      <workItem from="1719719141655" duration="7000" />
     </task>
     <servers />
   </component>
