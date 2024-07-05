@@ -50,6 +50,12 @@ dependencies {
 
 	runtimeOnly 'com.h2database:h2:2.2.224'
 
+	// Zipkin
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+	implementation 'io.opentelemetry:opentelemetry-exporter-zipkin'
+	implementation 'io.github.openfeign:feign-micrometer'
+
 
 	// Cloud
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
