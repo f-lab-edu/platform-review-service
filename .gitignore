@@ -4,3 +4,4 @@
 /review-service/run.bat
 /platform-service/run.bat
 /eureka/run.bat
+/ConfigServer/run.bat
