@@ -19,6 +19,30 @@ spring:
           predicates:
             - Path=/api/review
 
+
+
+
+        - id: review-service
+          uri: lb://REVIEW-SERVICE
+          predicates:
+            - Path=/review-service/actuator/**
+          filters:
+            - RewritePath=/review-service/(?<segment>.*), /$\{segment}
+
+        - id: platform-service
+          uri: lb://PLATFORM-SERVICE
+          predicates:
+            - Path=/platform-service/actuator/**
+          filters:
+            - RewritePath=/platform-service/(?<segment>.*), /$\{segment}
+
+        - id: member-service
+          uri: lb://MEMBER-SERVICE
+          predicates:
+            - Path=/member-service/actuator/**
+          filters:
+            - RewritePath=/member-service/(?<segment>.*), /$\{segment}
+
 server:
   port: 8080
 

@@ -8,6 +8,7 @@ import com.prs.rs.dto.request.ReviewWriteDto;
 import com.prs.rs.dto.response.PlatformInfoDto;
 import com.prs.rs.dto.response.ReviewListResultDto;
 import com.prs.rs.service.ReviewService;
+import io.micrometer.core.annotation.Counted;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -56,6 +57,7 @@ public class ReviewController {
 
     @GetMapping("/review")
     @Operation(summary = "리뷰 목록")
+    @Counted(value = "review.request.count")
     public ReviewListResultDto listReview(@ModelAttribute @Valid ReviewListDto reviewListDto) {
         return reviewService.getReviewList(reviewListDto, reviewListDto.getPlatformId(),
             new PlatformInfoDto());

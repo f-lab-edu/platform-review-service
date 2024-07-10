@@ -1,1 +1,7 @@
 .idea
+/Gateway/run.bat
+/member-service/run.bat
+/review-service/run.bat
+/platform-service/run.bat
+/eureka/run.bat
+/ConfigServer/run.bat
