@@ -32,6 +32,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -58,6 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
+    @Transactional
     public Review addReview(@ValidatePlatform Long platformId, PlatformInfoDto platformInfoDto,
         @ValidateMember MemberInfoDto memberInfoDto,
         ReviewWriteDto reviewWriteDto) {
@@ -121,6 +123,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Cacheable(value = "reviews",
         key = "#reviewListDto.platformId + '#' + #reviewListDto.page + '#' + #reviewListDto.sort",
         cacheManager = "redisCacheManager")
+    @Transactional(readOnly = true)
     public ReviewListResultDto getReviewList(ReviewListDto reviewListDto,
         @ValidatePlatform Long platformId, PlatformInfoDto platform) {
 
