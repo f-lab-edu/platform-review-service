@@ -1,5 +1,7 @@
 # 소개
-사용자들이 이용한 플랫폼에 대해 후기를 기록하고 평가할 수 있는 서비스 입니다.<br/><br/><br/>
+- ``프로젝트명 :`` 이용 플랫폼 리뷰 서비스<br/>
+- ``설명 :`` 사용자들이 이용한 플랫폼에 대해 후기를 기록하고 평가할 수 있는 서비스 입니다.<br/><br/><br/>
+
 # 사용 기술
 - Java, Spring Boot, JPA, Spring Data JPA, QueryDSL, Spring Security
 - Spring Cloud, MySQL, Redis, Apache Kafka
